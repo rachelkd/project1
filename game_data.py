@@ -25,7 +25,18 @@ class Location:
     """A location in our text adventure game world.
 
     Instance Attributes:
-        - # TODO
+        - num:
+            The location number for this location.
+        - name:
+            The name for this location.
+        - brief:
+            A brief description of this location.
+        - long:
+            A long description of this location.
+        - items:
+            Items that can be found in this location
+        - furnitures:
+            Furniture that can be found and interacted with in this location.
 
     Representation Invariants:
         - # TODO
