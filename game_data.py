@@ -18,6 +18,7 @@ please consult our Course Syllabus.
 
 This file is Copyright (c) 2024 CSC111 Teaching Team
 """
+from __future__ import annotations
 from typing import Optional, TextIO
 
 
@@ -39,8 +40,17 @@ class Location:
             Furniture that can be found and interacted with in this location.
 
     Representation Invariants:
-        - # TODO
+        - num >= 0
+        - name != ''
+        - brief != ''
+        - long != ''
     """
+    num: int
+    name: str
+    brief: str
+    long: str
+    items: list[Item] = []
+    furnitures: list[Item] = []
 
     def __init__(self) -> None:
         """Initialize a new location.
