@@ -19,7 +19,7 @@ please consult our Course Syllabus.
 This file is Copyright (c) 2024 CSC111 Teaching Team
 """
 from __future__ import annotations
-from typing import Optional, TextIO
+from typing import Optional, TextIO, Union
 
 
 class Location:
@@ -27,30 +27,34 @@ class Location:
 
     Instance Attributes:
         - num:
-            The location number for this location.
-        - name:
-            The name for this location.
+            The unique location number for this location.
+        - points:
+            The number of points a player receives for visiting this location.
         - brief:
             A brief description of this location.
         - long:
             A long description of this location.
-        - items:
-            Items that can be found in this location
-        - furnitures:
-            Furniture that can be found and interacted with in this location.
+        - available_actions:
+            A list of all available actions/commands in alphabetical order.
+        - interactables:
+            A list of Item and Furniture objects that can be found and interacted with in this location.
+            If empty, the location has nothing to examine.
+        - visited:
+            Boolean that is True if player has been to this location already.
+            Otherwise, visited is False.
 
     Representation Invariants:
-        - num >= 0
-        - name != ''
+        - num >= -1
         - brief != ''
         - long != ''
     """
     num: int
-    name: str
+    points: int
     brief: str
     long: str
-    items: list[Item] = []
-    furnitures: list[Item] = []
+    available_actions: list[str]
+    interactables: list[Union[Item, Furniture]]
+    visited: bool
 
     def __init__(self) -> None:
         """Initialize a new location.
@@ -117,6 +121,91 @@ class Item:
         self.start_position = start
         self.target_position = target
         self.target_points = target_points
+
+
+class PowerUp(Item):
+    """A power up item in our text adventure game world.
+
+    Instance Attributes:
+        - moves_back:
+            The number of moves that a player gets deducted from their total.
+            Moves are only deducted the first time a player picks up this item
+        - picked_up:
+            Boolean value that is True when a player has already picked up this item
+
+    Representation Invariants:
+        - # TODO
+    """
+
+
+class Furniture:
+    """An interactable furniture in our text adventure game world.
+
+    Instance Attributes:
+        - name:
+            The name of this furniture
+        - points:
+            Points that a player earns for examining this furniture
+        - items:
+            A list of items that can be found inside of this furniture
+
+    Representation Invariants:
+        - name != ''
+        - points >= 0
+    """
+
+    def __init__(self, name: str, points: int, items: Optional[list[Item]] = None) -> None:
+        """Initialize a new item.
+        """
+
+        # NOTES:
+        # This is just a suggested starter class for Item.
+        # You may change these parameters and the data available for each Item object as you see fit.
+        # (The current parameters correspond to the example in the handout).
+        # Consider every method in this Item class as a "suggested method".
+        #
+        # The only thing you must NOT change is the name of this class: Item.
+        # All item objects in your game MUST be represented as an instance of this class.
+
+        self.name = name
+        self.points = points
+        self.items = items
+
+
+class LockedFurniture:
+    """An interactable locked furniture in our text adventure game world.
+
+    Instance Attributes:
+        - name:
+            The name of this locked furniture
+        - points:
+            Points that a player earns for examining this locked furniture
+        - items:
+            A list of items that can be found inside of this locked furniture
+        - key:
+            Password required for a player to "open" this locked furniture
+
+    Representation Invariants:
+        - name != ''
+        - points >= 0
+    """
+
+    def __init__(self, name: str, points: int, items: Optional[list[Item]] = None) -> None:
+        """Initialize a new item.
+        """
+
+        # NOTES:
+        # This is just a suggested starter class for Item.
+        # You may change these parameters and the data available for each Item object as you see fit.
+        # (The current parameters correspond to the example in the handout).
+        # Consider every method in this Item class as a "suggested method".
+        #
+        # The only thing you must NOT change is the name of this class: Item.
+        # All item objects in your game MUST be represented as an instance of this class.
+
+        self.name = name
+        self.points = points
+        self.items = items
 
 
 class Player:
