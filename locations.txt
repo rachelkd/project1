@@ -150,7 +150,10 @@ the elevator to your South.
 END
 
 14
-... TODO TO OOP OT OD OOJEQTNIQON
+0
+You made it to the Exam Centre.
+You made it to the Exam Centre.
+END
 
 15
 50
