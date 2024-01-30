@@ -35,7 +35,7 @@ class Location:
         - long:
             A long description of this location.
         - available_actions:
-            A list of all available actions/commands in alphabetical order.
+            A list of all available actions/commands.
         - interactables:
             A list of Item and Furniture objects that can be found and interacted with in this location.
             If empty, the location has nothing to examine.
@@ -80,18 +80,13 @@ class Location:
 
         # TODO: Complete this method
 
-    def available_actions(self):
+    def available_actions(self) -> str:
         """
         Return the available actions in this location.
         The actions should depend on the items available in the location
         and the x,y position of this location on the world map.
         """
-
-        # NOTE: This is just a suggested method
-        # i.e. You may remove/modify/rename this as you like, and complete the
-        # function header (e.g. add in parameters, complete the type contract) as needed
-
-        # TODO: Complete this method, if you'd like or remove/replace it if you're not using it
+        return "\n".join(self.available_actions)
 
 
 class Item:
