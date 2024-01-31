@@ -110,6 +110,7 @@ class Item:
     Representation Invariants:
         - name != ""
     """
+
     def __init__(self, name, points):
         self.name = name
         self.points = points
@@ -156,6 +157,7 @@ class PowerUp(Item):
     Representation Invariants:
         - # TODO
     """
+
     def __init__(self, name, points, moves_back):
         super().__init__(name, points)
         self.moves_back = moves_back
@@ -267,6 +269,7 @@ class World:
     Representation Invariants:
         - # TODO
     """
+    map: list[list[int]]
 
     def __init__(self, map_data: TextIO, location_data: TextIO, items_data: TextIO) -> None:
         """
@@ -305,8 +308,14 @@ class World:
 
         Return this list representation of the map.
         """
+        file = map_data.read()
+        self.map = []
 
-        # TODO: Complete this method as specified. Do not modify any of this function's specifications.
+        for row in file:
+            filtered_row = [int(char) for char in row.split()]
+            self.map.append(filtered_row)
+
+        return self.map
 
     # TODO: Add methods for loading location data and item data (see note above).
     def load_locations(self, location_data: TextIO) -> list[Location]:
