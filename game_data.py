@@ -309,6 +309,21 @@ class World:
         # TODO: Complete this method as specified. Do not modify any of this function's specifications.
 
     # TODO: Add methods for loading location data and item data (see note above).
+    def load_locations(self, location_data: TextIO) -> list[Location]:
+        """Store locations from open file location_data as the locations attribute of this object.
+        Locations are stored in a list/dict? like so: {}"""
+        # TODO
+        pass
+
+    def load_items(self, items_data: TextIO) -> dict[int, list[Item]]:
+        """Store items from open file items_data as the items attribute of this object.
+        Items are stored in a mapping that maps a location number to its corresponding Items in a list like so:
+
+        If item1 and item2 are Item objects found in location 0, then load_items should assign this
+        World object's items to be {-1: [], 0: [item1, item2]}.
+        """
+        # TODO
+        pass
 
     # NOTE: The method below is REQUIRED. Complete it exactly as specified.
     def get_location(self, x: int, y: int) -> Optional[Location]:
