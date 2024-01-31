@@ -18,16 +18,12 @@ END
 That way is blocked.
 That way is blocked.
 END
-FURNITURE START
-END
 
 1
 0
 You are in the lobby of CampusOne Student Residences. Head north to go to Bahen Center, or go to the Exam Center to the East.
 You are in the lobby of CampusOne Student Residences. Finally. The elevators took forever. Bahen Center is to your North.
 Whenever you are ready to take your exam, head East to go to the Exam Center from CampusOne.
-END
-FURNITURE START
 END
 
 2
@@ -37,8 +33,6 @@ You are on the first floor of Bahen Center. People have fallen asleep from study
 Wow! Those staircases to your West almost took you out yesterday. Don't mix exercise with extreme studying fatigue.
 There is an exit to your East.
 END
-FURNITURE START
-END
 
 3
 20
@@ -47,26 +41,12 @@ Nice, you took the stairs, and you're not winded. You notice Sadia's office to y
 Gosh, last time you were there for office hours, you had to leave because everyone's trying natural deodorant now.
 It doesn't work. There's an empty classroom to your North, which is strange for this time of the day.
 END
-FURNITURE START
-END
 
 4
 50
 You are in an empty classroom in Bahen Center. There is a desk and blackboard. Return to the hallway to your South.
 You are in an empty classroom in Bahen Center. You notice a desk with a drawer that did not seem to close all the way.
 That's weird. Did a TA leave it open by accident?
-END
-FURNITURE START
-desk,10,False
-open,close
-note,50,pick,drop,read:::The answer is in your nose and Christmas stocking.
-pencil,5,examine:::HB 2 PENCIL
-deodorant,50,pick,drop,examine:::SCHMIDT's NATURAL DEODORANT - Coal and Magnesium
-END
-FURNITURE START
-blackboard,5,False
-read:::Is this your pen?
-pen,100,pick:::Nice! You found your lucky pen. (+100 points)
 END
 
 5
@@ -75,11 +55,6 @@ You are in Sadia's office. There is a locked drawer. Return to the hallway to yo
 You are in Sadia's office. It smells... kind of pleasant, actually. You notice a drawer. Hm.
 It's locked. Return to the hallway to your East.
 END
-FURNITURE START
-drawer,50,True
-open,close
-tcard,100,pick:::*Your T-Card!* You might be able to write the exam!
-END
 
 6
 10
@@ -87,15 +62,13 @@ You are in Myhal. Exit to St. George Street is to your West. There is a hallway 
 You are in Myhal Centre. Somebody made some Buldak Spicy Chicken Carbonara ramen here recently. Tasty!
 Exit to St. George Street on your West. Visit a hallway to your East.
 END
-ITEM START
-ramen,-5,pick:::&#$*! You just spilt the carbonara sauce on your WHITE Uniqlo Airism shirt.
-END
 
 7
 -5
 You are in an elevator inside Myhal Centre. It's broken. Go back to the hallway to your South.
 You entered an elevator inside Myhal Centre. ... The button isn't working. Time is ticking.
 Go back to the hallway to your South.
+END
 
 8
 10
@@ -103,10 +76,6 @@ You are on St. George Street South. Go back to Bahen to your West, or go to St. 
 You are on St. George Street South. I guess classes just ended, because there's a lot of people walking around.
 A lot of people are waiting for food from the food truck.
 Escape the crowd by going back to Bahen to your West, or continue up to St. George North to your North.
-END
-FURNITURE START
-truck,10,False,mission:::key,cash
-examine:::FOOD TRUCK WORKER: Hey, do me a favour, will you? Take this key. Bring it to ------ (you can't hear him because of his accent)., deliver:::Thanks. I was running out of change to bring to the customers. Here, take this paper I found. You look like you're in computer science. Maybe these notes will help you.
 END
 
 9
@@ -131,6 +100,7 @@ You are on the first floor of Robarts Library. There is an elevator to your East
 You are on the first floor of Robarts Library. Wow! The heart of UofT. You remember studying countless hours here for
 lackluster results. You love the sad, brutalist architecture here that just really inspires you.
 There is a stairwell to your North, and elevator to your East. You have been walking awhile.
+END
 
 12
 10
@@ -159,7 +129,4 @@ You are in the stairwell in Robarts. Go to the book stacks to your East, or go b
 You are in the stairwell in Robarts. Maybe walking 10 flights of stairs is a bad idea, but the elevator has broken on you before.
 No time to waste. You're sweating. Is there anything you can use as a tissue? Enter the book stacks on floor 10 to your East,
 or go back downstairs to the first floor to your South.
-END
-ITEM START
-cheat_sheet,100,pick:::Your cheatsheet! You are so thankful you took the stairs. Can you still make it to your exam?
 END

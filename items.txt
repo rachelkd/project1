@@ -1,1 +1,129 @@
-1 10 5 Cheat Sheet
+[LOCATION NUMBER:::FURNITURE NAME]
+[I (ITEM)]
+[ITEM NAME]
+[POINTS]
+[ACTION]:::[TEXT OUTPUT WHEN ACTION IS PERFORMED]
+... MORE ACTIONS
+END
+
+[LOCATION NUMBER]
+[PU (POWER UP)]
+[MOVES BACK; POSITIVE ADDS MOVES, NEGATIVE REMOVES MOVES]
+[ITEM NAME]
+[POINTS]
+[ACTION]:::[TEXT OUTPUT WHEN ACTION IS PERFORMED]
+... MORE ACTIONS
+END
+
+[LOCATION NUMBER]
+[F (FURNITURE)]
+[FURNITURE NAME]
+[POINTS FOR INTERACTING],[LOCKED T],[MISSION T:::ITEM GIVEN,ITEM TO DELIVER]
+[ACTION]:::[TEXT OUTPUT WHEN ACTION IS PERFORMED]
+... MORE ACTIONS
+END
+
+
+4
+F
+desk
+10
+open
+close
+END
+
+4
+F
+blackboard
+5
+read:::Is this your pen?
+END
+
+4:::desk
+I
+pencil
+0
+examine:::HB 2 pencil \nHmm. Not the one you were looking for.
+END
+
+4:::desk
+I
+deodorant
+50
+examine:::SCHMIDT's NATURAL DEODORANT - Coal and Magnesium
+END
+
+5
+I
+sticky note
+read:::You would not want to smell this in a Christmas stocking.
+END
+
+5
+F
+drawer
+50,True:::coal,False
+open
+close
+END
+
+5:::drawer
+I
+tcard
+100
+pick:::*Your T-Card!* You might be able to write the exam!
+END
+
+6
+I
+ramen
+-10
+pick:::&#$*! You just spilt the carbonara sauce on your WHITE Uniqlo Airism shirt.
+END
+
+8
+M
+key
+0
+END
+
+10
+M
+cash
+50
+END
+
+8
+M
+lucky pen
+50
+END
+
+8
+F
+20,False,True:::key,cash,pen
+examine:::FOOD TRUCK WORKER: Hey, do me a favour, will you? Take this key. Bring it to ------ (you can't hear him because of his accent).
+deliver:::Thanks. I was running out of change to bring to the customers. Here, all I have is this pen to give you.
+END
+
+9
+F
+bike rack
+10,True:::wheels,False
+open
+END
+
+9:::bike rack
+PU
+-5
+bike
+20
+ride:::Weeeeeeeeeee!
+END
+
+15
+I
+cheat sheet
+50
+pick:::Your cheatsheet! You are so thankful you took the stairs. Can you still make it to your exam?
+END
