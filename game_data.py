@@ -52,7 +52,7 @@ class Location:
     points: int
     brief: str
     long: str
-    available_actions: list[str]
+    available_actions: dict
     interactables: list[Union[Item, Furniture]]
     visited: bool
 
@@ -93,29 +93,54 @@ class Item:
     """An item in our text adventure game world.
 
     Instance Attributes:
-        - # TODO
+        - name:
+            The name of this item.
+        - points:
+            The amount of points a player receives for picking up this item.
+        - actions:
+            A dictionary of available actions for this item. The keys are the action calls.
+            The values are text output that should be returned for calling those actions
+        - picked_up:
+            Indicates whether this item has ever been picked up by a player.
+            True if it has ever been picked up. Otherwise, picked_up is False.
+        - cur_picked_up:
+            Indicates whether this item is currently picked up by a player.
+            True if currently picked up by player. Otherwise, False.
 
     Representation Invariants:
-        - # TODO
+        - name != ""
     """
-
-    def __init__(self, name: str, start: int, target: int, target_points: int) -> None:
-        """Initialize a new item.
-        """
-
-        # NOTES:
-        # This is just a suggested starter class for Item.
-        # You may change these parameters and the data available for each Item object as you see fit.
-        # (The current parameters correspond to the example in the handout).
-        # Consider every method in this Item class as a "suggested method".
-        #
-        # The only thing you must NOT change is the name of this class: Item.
-        # All item objects in your game MUST be represented as an instance of this class.
-
+    def __init__(self, name, points):
         self.name = name
-        self.start_position = start
-        self.target_position = target
-        self.target_points = target_points
+        self.points = points
+        self.actions = {'pick': f'You have picked up {self.name}.'}
+        self.picked_up = False
+        self.cur_picked_up = False
+
+    def add_action(self, action: str, argument: str):
+        """Add or mutate an action in self.actions."""
+        self.actions[action] = argument
+
+    def remove_action(self, action: str):
+        """Remove an action in self.actions if needed."""
+        if action in self.actions:
+            self.actions.pop(action)
+
+    def execute_action(self, action: str, player: Player) -> str:
+        """Execute an action for this item."""
+        if action in self.actions:
+            # Execute the action here
+            pass
+        # Could use try except statement here
+        # If player not in
+
+    def get_actions(self):
+        """Return all actions keys in self.actions."""
+        pass
+
+    def picked_up(self, player):
+        """Returns whether this item has ever been picked up by a player."""
+        return self.picked_up
 
 
 class PowerUp(Item):
@@ -131,6 +156,9 @@ class PowerUp(Item):
     Representation Invariants:
         - # TODO
     """
+    def __init__(self, name, points, moves_back):
+        super().__init__(name, points)
+        self.moves_back = moves_back
 
 
 class Furniture:

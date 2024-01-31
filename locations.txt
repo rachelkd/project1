@@ -14,7 +14,6 @@ FURNITURE START
 END
 
 -1
-INVALID
 0
 That way is blocked.
 That way is blocked.
@@ -23,7 +22,6 @@ FURNITURE START
 END
 
 1
-CAMPUSONE
 0
 You are in the lobby of CampusOne Student Residences. Head north to go to Bahen Center, or go to the Exam Center to the East.
 You are in the lobby of CampusOne Student Residences. Finally. The elevators took forever. Bahen Center is to your North.
@@ -117,7 +115,7 @@ You are on St. George Street North. Robarts is to your North. Return to St. Geor
 You are on St. George Street North. Someone left their bike unlocked.
 Haven't they heard about the bikes being stolen on campus? People even take the wheels off sometimes.
 ITEM START
-pu,bike,50,pick:::This will make your commute much easier.
+pu:::-2,bike,50,pick:::This will make your commute much easier.
 END
 
 10
