@@ -111,10 +111,12 @@ class MissionLocation(Location):
         - item_to_deliver != ''
         - item_to_receive != ''
     """
+
     def __init__(self, num, points, brief, long, item_to_deliver, item_to_receive):
         super().__init__(num, points, brief, long)
         self.item_to_deliver = item_to_deliver
         self.item_to_receive = item_to_receive
+
 
 class Item:
     """An item in our text adventure game world.
@@ -265,13 +267,22 @@ class Player:
     A Player in the text adventure game.
 
     Instance Attributes:
-        - # TODO
+        - x:
+            The player's x coordinate on the map.
+        - y:
+            The player's y coordinate on the map.
+        - inventory:
+            Objects that the player has picked up.
+        - victory:
+            The player's victory status
+        - world:
+
 
     Representation Invariants:
         - # TODO
     """
 
-    def __init__(self, x: int, y: int) -> None:
+    def __init__(self, x: int, y: int, world: World) -> None:
         """
         Initializes a new Player at position (x, y).
         """
@@ -280,6 +291,7 @@ class Player:
         # This is a suggested starter class for Player.
         # You may change these parameters and the data available for the Player object as you see fit.
 
+        self.world = world
         self.x = x
         self.y = y
         self.inventory = []
