@@ -244,7 +244,7 @@ class Furniture:
     items: list[Item]
     actions: dict[str, str]
 
-    def __init__(self, name: str, points: int, actions: Optional[dict[str, str]] = None) -> None:
+    def __init__(self, name: str, points: int, actions: dict[str, str]) -> None:
         """Initialize a new Furniture.
         """
         self.name = name
@@ -530,19 +530,24 @@ class World:
             actions = {}
             line = items_data.readline()
             while line.strip() != 'END':
-                substrings = line.split(':::')
-                actions[substrings[0]] = substrings[1].strip()
+                args = line.split(':::')
+                actions[args[0]] = args[1].strip()
                 line = items_data.readline()
 
             # Create new interactable objects based on type
             for loc in self.locations:
                 if loc.num == stored_in_location:
                     if object_type == 'F':  # Create new Furniture object
+                        loc.interactables.append(Furniture(name, points, actions))
+                    elif object_type == 'I':
+                        if stored_in_furniture:
+                            pass
+                        else:
+                            new_item = Item(name, points)
+                            loc.interactables.append(new_item)
+                            for action in actions:
+                                new_item.add_action(action, actions[action])
 
-                        # obj = Furniture()
-                        pass
-
-                    # TODO: FINISHHOIGHQOIGFNOIQENF
                     break
 
         return {}
