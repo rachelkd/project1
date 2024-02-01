@@ -62,11 +62,11 @@ read:::You would not want to smell this in a Christmas stocking.
 END
 
 5
-F
+LF
+coal
 drawer
-50,True:::coal,False
+50
 open
-close
 END
 
 5:::drawer
@@ -102,8 +102,9 @@ lucky pen
 END
 
 8
-F
-20,False,True:::key,cash,pen
+MF
+key,cash,pen
+20
 examine:::FOOD TRUCK WORKER: Hey, do me a favour, will you? Take this key. Bring it to ------ (you can't hear him because of his accent).
 deliver:::Thanks. I was running out of change to bring to the customers. Here, all I have is this pen to give you.
 END

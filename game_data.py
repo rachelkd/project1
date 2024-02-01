@@ -238,13 +238,17 @@ class Furniture:
     items: list[Item]
     actions: dict[str, str]
 
-    def __init__(self, name: str, points: int, actions: Optional[dict[str, str]]) -> None:
+    def __init__(self, name: str, points: int, actions: Optional[dict[str, str]] = None) -> None:
         """Initialize a new Furniture.
         """
         self.name = name
         self.points = points
         self.items = []
         self.actions = actions
+
+    def add_actions(self, action: str, output: str) -> None:
+        """Add an action to this Furniture."""
+        self.actions[action] = output
 
 
 class LockedFurniture(Furniture):
@@ -269,7 +273,7 @@ class LockedFurniture(Furniture):
         """Initialize a new LockedFurniture.
         """
         super().__init__(name, points)
-
+        self.add_actions('open', f'You have opened {self.name}')
 
 
 class Player:
@@ -485,6 +489,8 @@ class World:
             line = items_data.readline()
             object_type = line.strip()
 
+            # TODO: Check if is MF/LF and read next lines
+
             # Read interactable name
             line = items_data.readline()
             name = line.strip()
@@ -507,11 +513,8 @@ class World:
                     if object_type == 'F':  # Create new Furniture object
                         obj = Furniture()
 
-
+                    # TODO: FINISHHOIGHQOIGFNOIQENF
                     break
-
-
-
 
         return {}
 
