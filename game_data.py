@@ -308,11 +308,10 @@ class World:
 
         Return this list representation of the map.
         """
-        file = map_data.read()
         self.map = []
 
-        for row in file:
-            filtered_row = [int(char) for char in row.split()]
+        for line in map_data:
+            filtered_row = [int(char) for char in line.split()]
             self.map.append(filtered_row)
 
         return self.map
