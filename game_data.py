@@ -262,14 +262,21 @@ class LockedFurniture:
 
 class Player:
     """
-    A Player in the text advanture game.
+    A Player in the text adventure game.
 
     Instance Attributes:
-        - # TODO
+        - position:
+            Player's position on the map.
+        - inventory:
+            Objects that the player has picked up.
+        -
 
     Representation Invariants:
         - # TODO
     """
+
+
+
 
     def __init__(self, x: int, y: int) -> None:
         """
@@ -291,15 +298,15 @@ class Player:
         (north, east, south, west).
         """
         if direction.lower() == 'north':
-            if
+            pass
         elif direction.lower() == 'east':
-            oweijfoiwejfwofj
+            pass
         elif direction.lower() == 'south':
-            woeijfweiofjwiofj
+            pass
         elif direction.lower() == 'west':
-            woefijjwioejfowejf
+            pass
         else:
-
+            pass
 
 
 class World:
