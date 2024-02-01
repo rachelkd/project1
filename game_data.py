@@ -226,7 +226,7 @@ class Furniture:
         self.items = items
 
 
-class LockedFurniture:
+class LockedFurniture(Furniture):
     """An interactable locked furniture in our text adventure game world.
 
     Instance Attributes:
@@ -303,15 +303,27 @@ class Player:
         (north, east, south, west).
         """
         if direction.lower() == 'north':
-            pass
+            if self.world.map[self.y - 1][self.x] == -1:
+                pass
+            else:
+                self.y -= 1
         elif direction.lower() == 'east':
-            pass
+            if self.world.map[self.y][self.x + 1] == -1:
+                pass
+            else:
+                self.x += 1
         elif direction.lower() == 'south':
-            pass
+            if self.world.map[self.y + 1][self.x] == -1:
+                pass
+            else:
+                self.y = 1
         elif direction.lower() == 'west':
-            pass
+            if self.world.map[self.y][self.x - 1] == -1:
+                pass
+            else:
+                self.x -= 1
         else:
-            pass
+            print("This is not a valid direction. Try entering a valid one!")
 
 
 class World:
@@ -389,9 +401,20 @@ class World:
 
         # Read locations until EOF
         while line:
+            is_mission_location = False
+            item_to_deliver = ''
+            item_to_receive = ''
+
             # Read location number
             line = location_data.readline()
-            location_number = int(line)
+            try:
+                location_number = int(line)
+            except ValueError:  # Special mission location
+                is_mission_location = True
+                substrings = line.split(',')
+                location_number = int(substrings[0])
+                item_to_deliver = substrings[1].split(':::')[1]
+                item_to_receive = substrings[2].strip()
 
             # Read location points
             line = location_data.readline()
@@ -411,7 +434,14 @@ class World:
             line = location_data.readline()
             assert line.strip() == ''
 
-            self.locations.append(Location(location_number, points, brief, long))
+            if not is_mission_location:
+                self.locations.append(Location(
+                    location_number, points, brief, long)
+                )
+            else:
+                self.locations.append(MissionLocation(
+                    location_number, points, brief, long, item_to_deliver, item_to_receive)
+                )
 
         return self.locations
 
@@ -445,3 +475,11 @@ class World:
 
         except IndexError:
             return None
+
+
+# --------- Exceptions ---------
+class DirectionError(Exception):
+    """Exception raised when direction is invalid."""
+    def __str__(self) -> str:
+        """Return a string representation of this error."""
+        return 'Invalid direction'
