@@ -104,6 +104,7 @@ END
 8
 MF
 key,cash,pen
+food truck
 20
 examine:::FOOD TRUCK WORKER: Hey, do me a favour, will you? Take this key. Bring it to ------ (you can't hear him because of his accent).
 deliver:::Thanks. I was running out of change to bring to the customers. Here, all I have is this pen to give you.

@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b2273764-ca3f-4536-a3e1-0d6e7c9411d4" name="Changes" comment="" />
+    <list default="true" id="b2273764-ca3f-4536-a3e1-0d6e7c9411d4" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/items.txt" beforeDir="false" afterPath="$PROJECT_DIR$/items.txt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,9 +17,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 5
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="2bSWhUbz0w5xEEoK5ShIHB5tuz6" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -25,7 +29,8 @@
   "keyToString": {
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "jeha"
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "/Users/rachel/Desktop/CSC111/csc111/assignments/project1"
   }
 }]]></component>
   <component name="SharedIndexes">

@@ -58,8 +58,6 @@ class Location:
 
     def __init__(self, num, points, brief, long) -> None:
         """Initialize a new location.
-
-        # TODO Add more details here about the initialization if needed
         """
 
         # NOTES:
@@ -71,12 +69,6 @@ class Location:
         # items that are available in the location,
         # and whether the location has been visited before.
         # Store these as you see fit, using appropriate data types.
-        #
-        # This is just a suggested starter class for Location.
-        # You may change/add parameters and the data available for each Location object as you see fit.
-        #
-        # The only thing you must NOT change is the name of this class: Location.
-        # All locations in your game MUST be represented as an instance of this class.
 
         self.num = num
         self.points = points
@@ -93,6 +85,20 @@ class Location:
         and the x,y position of this location on the world map.
         """
         return "\n".join(self.available_actions)
+
+    def get_coordinates(self, world: World) -> Optional[tuple[int, int]]:
+        """Return coordinates of this location in a given world.
+        If this location number is -1, then self.get_coordinates returns None.
+
+        Preconditions:
+            - self.num in {n for row in map for n in row}
+        """
+        if self.num == -1:
+            return
+        for y in range(0, len(world.map)):
+            for x in range(0, len(world.map[0])):
+                if world.map[y][x] == self.num:
+                    return x, y
 
 
 class MissionLocation(Location):
@@ -259,21 +265,28 @@ class LockedFurniture(Furniture):
             The name of this locked furniture
         - points:
             Points that a player earns for examining this locked furniture
-        - items:
-            A list of items that can be found inside of this locked furniture
         - key:
             Password required for a player to "open" this locked furniture
+        - items:
+            A list of items that can be found inside of this locked furniture.
+            If there are no items in this Furniture, the list is empty.
 
     Representation Invariants:
         - name != ''
         - points >= 0
     """
 
-    def __init__(self, name: str, points: int, items: Optional[list[Item]] = None) -> None:
+    def __init__(self, name: str, points: int, key: str, items: Optional[list[Item]] = None) -> None:
         """Initialize a new LockedFurniture.
         """
         super().__init__(name, points)
+        self.items = []
         self.add_actions('open', f'You have opened {self.name}')
+        self.key = key
+        # If items is not None, add it to self.items
+        if items:
+            for item in items:
+                self.items.append(item)
 
 
 class Player:
@@ -489,10 +502,24 @@ class World:
             line = items_data.readline()
             object_type = line.strip()
 
-            # TODO: Check if is MF/LF and read next lines
+            line = items_data.readline()
+
+            # Check object type as format changes if LF (LockedFurniture)
+            # or MF (MissionFurniture)
+            if object_type == 'LF':
+                # Read key value
+                key = line.strip()
+                line = items_data.readline()
+            elif object_type == 'MF':
+                # Read item given, to deliver, and to receive respectively
+                args = line.split(',')
+                assert len(args) == 3
+                item_given = args[0]
+                item_to_deliver = args[1]
+                item_to_receive = args[2].strip()
+                line = items_data.readline()
 
             # Read interactable name
-            line = items_data.readline()
             name = line.strip()
 
             # Read points
@@ -511,7 +538,9 @@ class World:
             for loc in self.locations:
                 if loc.num == stored_in_location:
                     if object_type == 'F':  # Create new Furniture object
-                        obj = Furniture()
+
+                        # obj = Furniture()
+                        pass
 
                     # TODO: FINISHHOIGHQOIGFNOIQENF
                     break
