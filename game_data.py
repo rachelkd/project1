@@ -111,10 +111,12 @@ class MissionLocation(Location):
         - item_to_deliver != ''
         - item_to_receive != ''
     """
+
     def __init__(self, num, points, brief, long, item_to_deliver, item_to_receive):
         super().__init__(num, points, brief, long)
         self.item_to_deliver = item_to_deliver
         self.item_to_receive = item_to_receive
+
 
 class Item:
     """An item in our text adventure game world.
@@ -279,9 +281,6 @@ class Player:
     Representation Invariants:
         - # TODO
     """
-
-
-
 
     def __init__(self, x: int, y: int, world: World) -> None:
         """
