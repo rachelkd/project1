@@ -285,6 +285,22 @@ class Player:
         self.inventory = []
         self.victory = False
 
+    def move(self, direction: str) -> None:
+        """
+        Moves the player one unit in the direction selected by the player. Possible directions are
+        (north, east, south, west).
+        """
+        if direction.lower() == 'north':
+            if
+        elif direction.lower() == 'east':
+            oweijfoiwejfwofj
+        elif direction.lower() == 'south':
+            woeijfweiofjwiofj
+        elif direction.lower() == 'west':
+            woefijjwioejfowejf
+        else:
+
+
 
 class World:
     """A text adventure game world storing all location, item and map data.
