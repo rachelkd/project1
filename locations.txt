@@ -1,4 +1,4 @@
-[LOCATION NUMBER]
+[LOCATION NUMBER],[optional MISSION location object]:::{item to deliver},{item to receive}
 [POINTS]
 [BRIEF DESCRIPTION]
 [LONG DESCRIPTION]
@@ -87,7 +87,7 @@ ITEM START
 pu:::-2,bike,50,pick:::This will make your commute much easier.
 END
 
-10
+10,mission:::key,cash
 10
 You are in a lecture room in Myhal. Return to the hallway to your North.
 You are in a lecture room in Myhal. There is nothing here. Like nothing... The desks and chairs are gone.
@@ -124,6 +124,14 @@ You made it to the Exam Centre.
 END
 
 15
+0
+You are in a hallway in Myhal. There is an elevator to the North and a lecture room to the South. Return to the main area of Myhal to the West.
+You are in a hallway in Myhal. Could your exam items be upstairs? There is an elevator to your North.
+Or maybe, your items are in a lecture room to your South. Go back to the main area of Myhal
+to your West.
+END
+
+16
 50
 You are in the stairwell in Robarts. Go to the book stacks to your East, or go back to the first floor to your South.
 You are in the stairwell in Robarts. Maybe walking 10 flights of stairs is a bad idea, but the elevator has broken on you before.

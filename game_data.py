@@ -56,7 +56,7 @@ class Location:
     interactables: list[Union[Item, Furniture]]
     visited: bool
 
-    def __init__(self) -> None:
+    def __init__(self, num, points, brief, long) -> None:
         """Initialize a new location.
 
         # TODO Add more details here about the initialization if needed
@@ -78,7 +78,13 @@ class Location:
         # The only thing you must NOT change is the name of this class: Location.
         # All locations in your game MUST be represented as an instance of this class.
 
-        # TODO: Complete this method
+        self.num = num
+        self.points = points
+        self.brief = brief
+        self.long = long
+        self.available_actions = {}
+        self.interactables = []
+        self.visited = False
 
     def available_actions(self) -> str:
         """
@@ -88,6 +94,27 @@ class Location:
         """
         return "\n".join(self.available_actions)
 
+
+class MissionLocation(Location):
+    """A location that completes a "mission" when a player enters this location with a specified Item object
+    in their inventory.
+
+    Instance Attributes:
+        - item_to_deliver:
+            The name of the Item object that a player must have in their inventory
+            when visiting this location.
+        - item_to_receive:
+            The name of the Item object that a player receives
+            when item to deliver is delivered.
+
+    Representation invariants:
+        - item_to_deliver != ''
+        - item_to_receive != ''
+    """
+    def __init__(self, num, points, brief, long, item_to_deliver, item_to_receive):
+        super().__init__(num, points, brief, long)
+        self.item_to_deliver = item_to_deliver
+        self.item_to_receive = item_to_receive
 
 class Item:
     """An item in our text adventure game world.
@@ -263,13 +290,20 @@ class World:
     """A text adventure game world storing all location, item and map data.
 
     Instance Attributes:
-        - map: a nested list representation of this world's map
-        - # TODO add more instance attributes as needed; do NOT remove the map attribute
+        - map:
+            A nested list representation of this world's map
+        - locations:
+            A list representation of all Location objects of this world's map
+        - interactables:
+            A mapping representation of Location numbers to Item and Furniture objects found in
+            the locations of this world's map
 
     Representation Invariants:
         - # TODO
     """
     map: list[list[int]]
+    locations: list[Location]
+    interactables: dict[int, list[Union[Item, Furniture]]]
 
     def __init__(self, map_data: TextIO, location_data: TextIO, items_data: TextIO) -> None:
         """
@@ -290,11 +324,8 @@ class World:
 
         # The map MUST be stored in a nested list as described in the load_map() function's docstring below
         self.map = self.load_map(map_data)
-
-        # NOTE: You may choose how to store location and item data; create your own World methods to handle these
-        # accordingly. The only requirements:
-        # 1. Make sure the Location class is used to represent each location.
-        # 2. Make sure the Item class is used to represent each item.
+        self.locations = self.load_locations(location_data)
+        self.interactables = self.load_items(items_data)
 
     # NOTE: The method below is REQUIRED. Complete it exactly as specified.
     def load_map(self, map_data: TextIO) -> list[list[int]]:
@@ -316,14 +347,22 @@ class World:
 
         return self.map
 
-    # TODO: Add methods for loading location data and item data (see note above).
     def load_locations(self, location_data: TextIO) -> list[Location]:
         """Store locations from open file location_data as the locations attribute of this object.
-        Locations are stored in a list/dict? like so: {}"""
-        # TODO
-        pass
+        Locations are stored in a list.
+        """
+        self.locations = []
 
-    def load_items(self, items_data: TextIO) -> dict[int, list[Item]]:
+        line = location_data.readline()
+
+        # Cycle through the lines in location.txt that indicate a template
+        while line != '\n':
+            line = location_data.readline()
+
+        # Read locations until EOF
+        return self.locations
+
+    def load_items(self, items_data: TextIO) -> dict[int, list[Union[Furniture, Item]]]:
         """Store items from open file items_data as the items attribute of this object.
         Items are stored in a mapping that maps a location number to its corresponding Items in a list like so:
 
@@ -331,7 +370,8 @@ class World:
         World object's items to be {-1: [], 0: [item1, item2]}.
         """
         # TODO
-        pass
+
+        return {}
 
     # NOTE: The method below is REQUIRED. Complete it exactly as specified.
     def get_location(self, x: int, y: int) -> Optional[Location]:
@@ -339,5 +379,16 @@ class World:
          that position. Otherwise, return None. (Remember, locations represented by the number -1 on the map should
          return None.)
         """
+        try:
+            location_number = self.map[y][x]
 
-        # TODO: Complete this method as specified. Do not modify any of this function's specifications.
+            # Check if location_number is -1
+            if location_number == -1:
+                return None
+
+            for location in self.locations:
+                if location.num == location_number:
+                    return location
+
+        except IndexError:
+            return None
