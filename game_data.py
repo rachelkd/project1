@@ -262,7 +262,7 @@ class LockedFurniture:
 
 class Player:
     """
-    A Player in the text advanture game.
+    A Player in the text adventure game.
 
     Instance Attributes:
         - # TODO
@@ -291,15 +291,15 @@ class Player:
         (north, east, south, west).
         """
         if direction.lower() == 'north':
-            if
+            pass
         elif direction.lower() == 'east':
-            oweijfoiwejfwofj
+            pass
         elif direction.lower() == 'south':
-            woeijfweiofjwiofj
+            pass
         elif direction.lower() == 'west':
-            woefijjwioejfowejf
+            pass
         else:
-
+            pass
 
 
 class World:
@@ -376,6 +376,31 @@ class World:
             line = location_data.readline()
 
         # Read locations until EOF
+        while line:
+            # Read location number
+            line = location_data.readline()
+            location_number = int(line)
+
+            # Read location points
+            line = location_data.readline()
+            points = int(line)
+
+            # Read brief description
+            line = location_data.readline()
+            brief = line.strip()
+
+            # Read long description
+            line = location_data.readline()
+            long = ''
+            while line.strip() != 'END':
+                long += line
+                line = location_data.readline()
+
+            line = location_data.readline()
+            assert line.strip() == ''
+
+            self.locations.append(Location(location_number, points, brief, long))
+
         return self.locations
 
     def load_items(self, items_data: TextIO) -> dict[int, list[Union[Furniture, Item]]]:
