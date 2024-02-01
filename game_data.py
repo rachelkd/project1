@@ -265,11 +265,16 @@ class Player:
     A Player in the text adventure game.
 
     Instance Attributes:
-        - position:
-            Player's position on the map.
+        - x:
+            The player's x coordinate on the map.
+        - y:
+            The player's y coordinate on the map.
         - inventory:
             Objects that the player has picked up.
-        -
+        - victory:
+            The player's victory status
+        - world:
+
 
     Representation Invariants:
         - # TODO
@@ -278,7 +283,7 @@ class Player:
 
 
 
-    def __init__(self, x: int, y: int) -> None:
+    def __init__(self, x: int, y: int, world: World) -> None:
         """
         Initializes a new Player at position (x, y).
         """
@@ -287,6 +292,7 @@ class Player:
         # This is a suggested starter class for Player.
         # You may change these parameters and the data available for the Player object as you see fit.
 
+        self.world = world
         self.x = x
         self.y = y
         self.inventory = []
