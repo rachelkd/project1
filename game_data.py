@@ -143,7 +143,7 @@ class Item:
     def __init__(self, name, points):
         self.name = name
         self.points = points
-        self.actions = {'pick': f'You have picked up {self.name}.'}
+        self.actions = {'pick': f'You have picked up {self.name}.', 'drop': f'You have dropped {self.name}.'}
         self.picked_up = False
         self.cur_picked_up = False
 
@@ -171,6 +171,29 @@ class Item:
     def picked_up(self, player):
         """Returns whether this item has ever been picked up by a player."""
         return self.picked_up
+
+
+class MissionItem(Item):
+    """A special item that can be received when a player has completed a mission.
+    These items cannot be picked up by players unless if the mission has been completed.
+
+    Instance Attributes:
+        - mission_completed:
+            Indicates whether the mission has been completed.
+
+    Representation Invariants:
+        - name != ''
+        - points > 0
+    """
+    mission_completed: bool
+
+    def __init__(self, name, points):
+        super().__init__(name, points)
+        self.mission_completed = False
+
+    def mission_completed(self):
+        """Updates this mission_completed attribute to be True"""
+        self.mission_completed = True
 
 
 class PowerUp(Item):
@@ -202,28 +225,26 @@ class Furniture:
             Points that a player earns for examining this furniture
         - items:
             A list of items that can be found inside of this furniture
+        - actions:
+            A mapping representation of actions to their text output when
+            action is performed
 
     Representation Invariants:
         - name != ''
         - points >= 0
     """
+    name: str
+    points: int
+    items: list[Item]
+    actions: dict[str, str]
 
-    def __init__(self, name: str, points: int, items: Optional[list[Item]] = None) -> None:
-        """Initialize a new item.
+    def __init__(self, name: str, points: int, actions: Optional[dict[str, str]]) -> None:
+        """Initialize a new Furniture.
         """
-
-        # NOTES:
-        # This is just a suggested starter class for Item.
-        # You may change these parameters and the data available for each Item object as you see fit.
-        # (The current parameters correspond to the example in the handout).
-        # Consider every method in this Item class as a "suggested method".
-        #
-        # The only thing you must NOT change is the name of this class: Item.
-        # All item objects in your game MUST be represented as an instance of this class.
-
         self.name = name
         self.points = points
-        self.items = items
+        self.items = []
+        self.actions = actions
 
 
 class LockedFurniture(Furniture):
@@ -245,21 +266,10 @@ class LockedFurniture(Furniture):
     """
 
     def __init__(self, name: str, points: int, items: Optional[list[Item]] = None) -> None:
-        """Initialize a new item.
+        """Initialize a new LockedFurniture.
         """
+        super().__init__(name, points)
 
-        # NOTES:
-        # This is just a suggested starter class for Item.
-        # You may change these parameters and the data available for each Item object as you see fit.
-        # (The current parameters correspond to the example in the handout).
-        # Consider every method in this Item class as a "suggested method".
-        #
-        # The only thing you must NOT change is the name of this class: Item.
-        # All item objects in your game MUST be represented as an instance of this class.
-
-        self.name = name
-        self.points = points
-        self.items = items
 
 
 class Player:
@@ -452,7 +462,56 @@ class World:
         If item1 and item2 are Item objects found in location 0, then load_items should assign this
         World object's items to be {-1: [], 0: [item1, item2]}.
         """
-        # TODO
+        line = items_data.readline()
+
+        # Cycle through the lines in items.txt that indicate a template
+        while line != '\n':
+            line = items_data.readline()
+
+        # Read lines until EOF
+        line = items_data.readline()
+
+        while line:
+            # Determine whether Item is found in a location or inside Furniture object
+            # a location
+            stored_in_furniture = ''
+            try:
+                stored_in_location = int(line)
+            except ValueError:  # Item is stored in a furniture object
+                stored_in_location = int(line.split(':::')[0])
+                stored_in_furniture = line.split(':::')[1].strip()
+
+            # Read interactable type
+            line = items_data.readline()
+            object_type = line.strip()
+
+            # Read interactable name
+            line = items_data.readline()
+            name = line.strip()
+
+            # Read points
+            line = items_data.readline()
+            points = int(line)
+
+            # Read actions
+            actions = {}
+            line = items_data.readline()
+            while line.strip() != 'END':
+                substrings = line.split(':::')
+                actions[substrings[0]] = substrings[1].strip()
+                line = items_data.readline()
+
+            # Create new interactable objects based on type
+            for loc in self.locations:
+                if loc.num == stored_in_location:
+                    if object_type == 'F':  # Create new Furniture object
+                        obj = Furniture()
+
+
+                    break
+
+
+
 
         return {}
 

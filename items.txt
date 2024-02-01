@@ -1,3 +1,5 @@
+TEMPLATE:
+-----------------------------------
 [LOCATION NUMBER:::FURNITURE NAME]
 [I (ITEM)]
 [ITEM NAME]
@@ -5,7 +7,7 @@
 [ACTION]:::[TEXT OUTPUT WHEN ACTION IS PERFORMED]
 ... MORE ACTIONS
 END
-
+-----------------------------------
 [LOCATION NUMBER]
 [PU (POWER UP)]
 [MOVES BACK; POSITIVE ADDS MOVES, NEGATIVE REMOVES MOVES]
@@ -14,7 +16,7 @@ END
 [ACTION]:::[TEXT OUTPUT WHEN ACTION IS PERFORMED]
 ... MORE ACTIONS
 END
-
+-----------------------------------
 [LOCATION NUMBER]
 [F (FURNITURE)]
 [FURNITURE NAME]
@@ -22,14 +24,14 @@ END
 [ACTION]:::[TEXT OUTPUT WHEN ACTION IS PERFORMED]
 ... MORE ACTIONS
 END
-
+-----------------------------------
 
 4
 F
 desk
 10
-open
-close
+open:::You have opened the desk.
+close:::You have closed the desk
 END
 
 4
