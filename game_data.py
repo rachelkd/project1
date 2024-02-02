@@ -19,7 +19,7 @@ please consult our Course Syllabus.
 This file is Copyright (c) 2024 CSC111 Teaching Team
 """
 from __future__ import annotations
-from typing import Optional, TextIO, Union
+from typing import Optional, TextIO, Union, Any
 
 
 class Location:
@@ -134,7 +134,9 @@ class Item:
             The amount of points a player receives for picking up this item.
         - actions:
             A dictionary of available actions for this item. The keys are the action calls.
-            The values are text output that should be returned for calling those actions
+            The values are text output that should be returned for calling those actions.
+        - stored_in_furniture:
+            Indicates whether this item is stored in a Furniture object.
         - picked_up:
             Indicates whether this item has ever been picked up by a player.
             True if it has ever been picked up. Otherwise, picked_up is False.
@@ -146,19 +148,31 @@ class Item:
         - name != ""
     """
 
-    def __init__(self, name, points):
+    def __init__(self, name: str, points: int, actions: dict[str, str], stored_in_furniture: Optional[bool] = None):
         self.name = name
         self.points = points
         self.actions = {'pick': f'You have picked up {self.name}.', 'drop': f'You have dropped {self.name}.'}
+        if stored_in_furniture:
+            self.stored_in_furniture = stored_in_furniture
+        else:
+            self.stored_in_furniture = False
         self.picked_up = False
         self.cur_picked_up = False
+        for action in actions:
+            self.add_action(action, actions[action])
 
     def add_action(self, action: str, argument: str):
-        """Add or mutate an action in self.actions."""
-        self.actions[action] = argument
+        """Add or mutate an action in self.actions.
+        If the action is pick or drop, then the action argument must
+        be appended to the actions.
+        """
+        if action == 'pick' or action == 'drop':
+            self.actions[action] += f'\n{argument}'
+        else:
+            self.actions[action] = argument
 
     def remove_action(self, action: str):
-        """Remove an action in self.actions if needed."""
+        """Remove an action for this item."""
         if action in self.actions:
             self.actions.pop(action)
 
@@ -193,13 +207,15 @@ class MissionItem(Item):
     """
     mission_completed: bool
 
-    def __init__(self, name, points):
-        super().__init__(name, points)
+    def __init__(self, name: str, points: int, actions: dict[str, str]) -> None:
+        super().__init__(name, points, actions)
         self.mission_completed = False
 
     def mission_completed(self):
         """Updates this mission_completed attribute to be True"""
         self.mission_completed = True
+
+    # TODO: Make pick/drop unique methods!!!
 
 
 class PowerUp(Item):
@@ -370,7 +386,7 @@ class World:
     """
     map: list[list[int]]
     locations: list[Location]
-    interactables: dict[int, list[Union[Item, Furniture]]]
+    interactables: dict[int, list]
 
     def __init__(self, map_data: TextIO, location_data: TextIO, items_data: TextIO) -> None:
         """
@@ -406,13 +422,13 @@ class World:
 
         Return this list representation of the map.
         """
-        self.map = []
+        world_map = []
 
         for line in map_data:
             filtered_row = [int(char) for char in line.split()]
-            self.map.append(filtered_row)
+            world_map.append(filtered_row)
 
-        return self.map
+        return world_map
 
     def load_locations(self, location_data: TextIO) -> list[Location]:
         """Store locations from open file location_data as the locations attribute of this object.
@@ -472,13 +488,15 @@ class World:
 
         return self.locations
 
-    def load_items(self, items_data: TextIO) -> dict[int, list[Union[Furniture, Item]]]:
+    def load_items(self, items_data: TextIO) -> dict[int, list[Union[Item, Furniture]]]:
         """Store items from open file items_data as the items attribute of this object.
         Items are stored in a mapping that maps a location number to its corresponding Items in a list like so:
 
         If item1 and item2 are Item objects found in location 0, then load_items should assign this
         World object's items to be {-1: [], 0: [item1, item2]}.
         """
+        interactables_so_far = {}
+
         line = items_data.readline()
 
         # Cycle through the lines in items.txt that indicate a template
@@ -537,20 +555,32 @@ class World:
             # Create new interactable objects based on type
             for loc in self.locations:
                 if loc.num == stored_in_location:
-                    if object_type == 'F':  # Create new Furniture object
-                        loc.interactables.append(Furniture(name, points, actions))
-                    elif object_type == 'I':
-                        if stored_in_furniture:
-                            pass
+                    if object_type == 'F':
+                        # Create new Furniture object
+                        new_furniture = Furniture(name, points, actions)
+                        loc.interactables.append(new_furniture)
+                        # Add Furniture to interactables_so_far
+                        if stored_in_location in interactables_so_far:
+                            interactables_so_far[stored_in_location] += new_furniture
                         else:
-                            new_item = Item(name, points)
+                            interactables_so_far[stored_in_location] = [new_furniture]
+                    elif object_type == 'I' or object_type == 'M':
+                        new_item = Item(name, points, actions, bool(stored_in_furniture))
+                        # Add Item to interactables_so_far
+                        if stored_in_location in interactables_so_far:
+                            interactables_so_far[stored_in_location] += new_item
+                        else:
+                            interactables_so_far[stored_in_location] = [new_item]
+                        if stored_in_furniture:
+                            # Find Furniture it is stored in
+                            for furniture in self.interactables[stored_in_location]:
+                                if furniture.name == stored_in_furniture:
+                                    # Add item to Furniture
+                                    furniture.items.append(new_item)
+                        else:
                             loc.interactables.append(new_item)
-                            for action in actions:
-                                new_item.add_action(action, actions[action])
 
-                    break
-
-        return {}
+        return interactables_so_far
 
     # NOTE: The method below is REQUIRED. Complete it exactly as specified.
     def get_location(self, x: int, y: int) -> Optional[Location]:
