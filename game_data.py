@@ -136,7 +136,8 @@ class Item:
             A dictionary of available actions for this item. The keys are the action calls.
             The values are text output that should be returned for calling those actions.
         - stored_in_furniture:
-            Indicates whether this item is stored in a Furniture object.
+            Name of the Furniture that this Item is stored in.
+            If it is not stored in a Location, then this is an empty string.
         - picked_up:
             Indicates whether this item has ever been picked up by a player.
             True if it has ever been picked up. Otherwise, picked_up is False.
@@ -148,14 +149,14 @@ class Item:
         - name != ""
     """
 
-    def __init__(self, name: str, points: int, actions: dict[str, str], stored_in_furniture: Optional[bool] = None):
+    def __init__(self, name: str, points: int, actions: dict[str, str], stored_in_furniture: Optional[str] = None):
         self.name = name
         self.points = points
         self.actions = {'pick': f'You have picked up {self.name}.', 'drop': f'You have dropped {self.name}.'}
         if stored_in_furniture:
             self.stored_in_furniture = stored_in_furniture
         else:
-            self.stored_in_furniture = False
+            self.stored_in_furniture = ''
         self.picked_up = False
         self.cur_picked_up = False
         for action in actions:
@@ -232,8 +233,8 @@ class PowerUp(Item):
         - # TODO
     """
 
-    def __init__(self, name, points, moves_back):
-        super().__init__(name, points)
+    def __init__(self, name, points, actions, moves_back):
+        super().__init__(name, points, actions, False)
         self.moves_back = moves_back
 
 
@@ -386,7 +387,7 @@ class World:
     """
     map: list[list[int]]
     locations: list[Location]
-    interactables: dict[int, list]
+    interactables: dict[int, list[Union[Furniture, Item]]]
 
     def __init__(self, map_data: TextIO, location_data: TextIO, items_data: TextIO) -> None:
         """
@@ -523,7 +524,9 @@ class World:
             line = items_data.readline()
 
             # Check object type as format changes if LF (LockedFurniture)
-            # or MF (MissionFurniture)
+            # or MF (MissionFurniture) or PU (PowerUp)
+            pu_moves_back = 0
+
             if object_type == 'LF':
                 # Read key value
                 key = line.strip()
@@ -535,6 +538,9 @@ class World:
                 item_given = args[0]
                 item_to_deliver = args[1]
                 item_to_receive = args[2].strip()
+                line = items_data.readline()
+            elif object_type == 'PU':
+                pu_moves_back = int(line)
                 line = items_data.readline()
 
             # Read interactable name
@@ -558,27 +564,44 @@ class World:
                     if object_type == 'F':
                         # Create new Furniture object
                         new_furniture = Furniture(name, points, actions)
-                        loc.interactables.append(new_furniture)
                         # Add Furniture to interactables_so_far
                         if stored_in_location in interactables_so_far:
-                            interactables_so_far[stored_in_location] += new_furniture
+                            interactables_so_far[stored_in_location] += [new_furniture]
                         else:
                             interactables_so_far[stored_in_location] = [new_furniture]
                     elif object_type == 'I' or object_type == 'M':
-                        new_item = Item(name, points, actions, bool(stored_in_furniture))
+                        new_item = Item(name, points, actions, stored_in_furniture)
                         # Add Item to interactables_so_far
                         if stored_in_location in interactables_so_far:
-                            interactables_so_far[stored_in_location] += new_item
+                            interactables_so_far[stored_in_location] += [new_item]
                         else:
                             interactables_so_far[stored_in_location] = [new_item]
                         if stored_in_furniture:
                             # Find Furniture it is stored in
-                            for furniture in self.interactables[stored_in_location]:
+                            for furniture in interactables_so_far[stored_in_location]:
                                 if furniture.name == stored_in_furniture:
                                     # Add item to Furniture
                                     furniture.items.append(new_item)
+                                    break
+                    elif object_type == 'PU':
+                        new_powerup = PowerUp(name, points, actions, pu_moves_back)
+                        # Add PowerUp to interactables_so_far
+                        if stored_in_location in interactables_so_far:
+                            interactables_so_far[stored_in_location] += [new_powerup]
                         else:
-                            loc.interactables.append(new_item)
+                            interactables_so_far[stored_in_location] = [new_powerup]
+                    elif object_type == 'M':
+                        new_mission_item = MissionItem(name, points, actions)
+                        # Add MissionItem to interactables_so_far
+                        if stored_in_location in interactables_so_far:
+                            interactables_so_far[stored_in_location] += [new_mission_item]
+                        else:
+                            interactables_so_far[stored_in_location] = [new_mission_item]
+
+                    break
+
+            items_data.readline()
+            line = items_data.readline()
 
         return interactables_so_far
 
