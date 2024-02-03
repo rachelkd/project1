@@ -19,7 +19,7 @@ please consult our Course Syllabus.
 This file is Copyright (c) 2024 CSC111 Teaching Team
 """
 from __future__ import annotations
-from typing import Optional, TextIO, Union, Any
+from typing import Optional, TextIO, Union
 
 
 class Location:
@@ -74,7 +74,7 @@ class Location:
         self.points = points
         self.brief = brief
         self.long = long
-        self.available_actions = {}
+        self.available_actions = {}  # TODO: Get actions from all interactables
         self.interactables = []
         self.visited = False
 
@@ -85,6 +85,13 @@ class Location:
         and the x,y position of this location on the world map.
         """
         return "\n".join(self.available_actions)
+
+    def available_interactables(self) -> str:
+        """
+        Return the available Items and Furnitures to interact with.
+        """
+        # TODO: Implement
+        return ''
 
     def get_coordinates(self, world: World) -> Optional[tuple[int, int]]:
         """Return coordinates of this location in a given world.
@@ -99,6 +106,24 @@ class Location:
             for x in range(0, len(world.map[0])):
                 if world.map[y][x] == self.num:
                     return x, y
+
+    def visit(self) -> None:
+        """Prints this Location description.
+        If this Location has not been visited, the long description is printed.
+        Otherwise, the short description is printed."""
+        if self.visited:
+            self.get_brief()
+            self.visited = True
+        else:
+            self.get_long()
+
+    def get_brief(self) -> None:
+        """Prints this Location's brief description to the console."""
+        print(self.brief)
+
+    def get_long(self) -> None:
+        """Prints this Location's brief description to the console."""
+        print(self.long)
 
 
 class MissionLocation(Location):
@@ -122,6 +147,8 @@ class MissionLocation(Location):
         super().__init__(num, points, brief, long)
         self.item_to_deliver = item_to_deliver
         self.item_to_receive = item_to_receive
+
+    # TODO: visit() method checks if player has object. NEED PLAYER ARG
 
 
 class Item:
@@ -149,7 +176,8 @@ class Item:
         - name != ""
     """
 
-    def __init__(self, name: str, points: int, actions: dict[str, str], stored_in_furniture: Optional[str] = None):
+    def __init__(self, name: str, points: int, actions: Optional[dict[str, str]] = None,
+                 stored_in_furniture: Optional[str] = None):
         self.name = name
         self.points = points
         self.actions = {'pick': f'You have picked up {self.name}.', 'drop': f'You have dropped {self.name}.'}
@@ -159,8 +187,9 @@ class Item:
             self.stored_in_furniture = ''
         self.picked_up = False
         self.cur_picked_up = False
-        for action in actions:
-            self.add_action(action, actions[action])
+        if actions:
+            for action in actions:
+                self.add_action(action, actions[action])
 
     def add_action(self, action: str, argument: str):
         """Add or mutate an action in self.actions.
@@ -172,26 +201,31 @@ class Item:
         else:
             self.actions[action] = argument
 
-    def remove_action(self, action: str):
-        """Remove an action for this item."""
-        if action in self.actions:
-            self.actions.pop(action)
-
     def execute_action(self, action: str, player: Player) -> str:
         """Execute an action for this item."""
         if action in self.actions:
-            # Execute the action here
-            pass
-        # Could use try except statement here
-        # If player not in
+            if action == 'pick':
+                self.pick(player)
+        return ''
 
-    def get_actions(self):
-        """Return all actions keys in self.actions."""
-        pass
+    def pick(self, player: Player):
+        """Adds this item to the given player's inventory."""
+        # Check if item is in player inventory
+        if not self.cur_picked_up and self in player.inventory:
+            player.add_to_inv(self)
+            self.picked_up = True
+            self.cur_picked_up = True
 
-    def picked_up(self, player):
-        """Returns whether this item has ever been picked up by a player."""
-        return self.picked_up
+    def drop(self, player: Player):
+        """Removes this item from the given player's inventory."""
+        if self.cur_picked_up and self in player.inventory:
+            player.remove_from_inv(self)
+            self.cur_picked_up = False
+
+    def get_actions(self) -> None:
+        """Prints all action keys for this item."""
+        for action in self.actions:
+            print(action)
 
 
 class MissionItem(Item):
@@ -208,15 +242,15 @@ class MissionItem(Item):
     """
     mission_completed: bool
 
-    def __init__(self, name: str, points: int, actions: dict[str, str]) -> None:
-        super().__init__(name, points, actions)
+    def __init__(self, name: str, points: int) -> None:
+        super().__init__(name, points, None)
         self.mission_completed = False
 
-    def mission_completed(self):
-        """Updates this mission_completed attribute to be True"""
+    def mission_completed(self, player: Player):
+        """Updates this mission_completed attribute to be True.
+        The player that completed the mission picks up this item automatically."""
         self.mission_completed = True
-
-    # TODO: Make pick/drop unique methods!!!
+        player.add_to_inv(self)
 
 
 class PowerUp(Item):
@@ -234,7 +268,7 @@ class PowerUp(Item):
     """
 
     def __init__(self, name, points, actions, moves_back):
-        super().__init__(name, points, actions, False)
+        super().__init__(name, points, actions)
         self.moves_back = moves_back
 
 
@@ -261,13 +295,16 @@ class Furniture:
     items: list[Item]
     actions: dict[str, str]
 
-    def __init__(self, name: str, points: int, actions: dict[str, str]) -> None:
+    def __init__(self, name: str, points: int, actions: dict[str, str] = None) -> None:
         """Initialize a new Furniture.
         """
         self.name = name
         self.points = points
         self.items = []
-        self.actions = actions
+        if actions:
+            self.actions = actions
+        else:
+            self.actions = {}
 
     def add_actions(self, action: str, output: str) -> None:
         """Add an action to this Furniture."""
@@ -287,6 +324,8 @@ class LockedFurniture(Furniture):
         - items:
             A list of items that can be found inside of this locked furniture.
             If there are no items in this Furniture, the list is empty.
+        - is_unlocked:
+            Indicates whether this LockedFurniture is unlocked.
 
     Representation Invariants:
         - name != ''
@@ -296,14 +335,45 @@ class LockedFurniture(Furniture):
     def __init__(self, name: str, points: int, key: str, items: Optional[list[Item]] = None) -> None:
         """Initialize a new LockedFurniture.
         """
-        super().__init__(name, points)
+        # open_arg = 'You '
+        super().__init__(name, points, {'open': f'You have opened {name}'})
         self.items = []
-        self.add_actions('open', f'You have opened {self.name}')
         self.key = key
         # If items is not None, add it to self.items
         if items:
             for item in items:
                 self.items.append(item)
+
+
+class MissionFurniture(Furniture):
+    """An interactable mission furniture in the text adventure game.
+    When player interacts with this furniture, they are given an item.
+    When a player interacts with this furniture with the item to deliver in their inventory,
+    they are given an item to receive.
+
+    Instance Attributes:
+        - item_given:
+            The item a player receives for interacting with this MissionFurniture.
+        - item_to_deliver:
+            The item a player has to deliver to receive an item.
+        - item_to_receive:
+            The item a player receives after delivering item_to_deliver.
+
+    Representation Invariants:
+        - item_given != ''
+        - item_to_deliver != ''
+        - item_to_receive != ''
+    """
+    item_given: str
+    item_to_deliver: str
+    item_to_receive: str
+
+    def __init__(self, name: str, points: int, actions: dict[str, str],
+                 item_given: str, item_to_deliver: str, item_to_receive: str) -> None:
+        super().__init__(name, points, actions)
+        self.item_given = item_given
+        self.item_to_deliver = item_to_deliver
+        self.item_to_receive = item_to_receive
 
 
 class Player:
@@ -320,11 +390,16 @@ class Player:
         - victory:
             The player's victory status
         - world:
+            The world that this player is in.
 
 
     Representation Invariants:
-        - # TODO
+        - x
     """
+
+    inventory: list[Item]
+    victory: bool
+    world: World
 
     def __init__(self, x: int, y: int, world: World) -> None:
         """
@@ -369,6 +444,16 @@ class Player:
         else:
             print("This is not a valid direction. Try entering a valid one!")
 
+    def add_to_inv(self, item: Item) -> None:
+        """Adds an Item to this player's inventory."""
+        self.inventory.append(item)
+
+    def remove_from_inv(self, item: Item) -> None:
+        """Removes this item from this player's inventory."""
+        for i in range(0, len(self.inventory)):
+            if self.inventory[i] == item:
+                self.inventory.pop(i)
+
 
 class World:
     """A text adventure game world storing all location, item and map data.
@@ -383,7 +468,8 @@ class World:
             the locations of this world's map
 
     Representation Invariants:
-        - # TODO
+        - map != []
+        - locations != []
     """
     map: list[list[int]]
     locations: list[Location]
@@ -525,7 +611,11 @@ class World:
 
             # Check object type as format changes if LF (LockedFurniture)
             # or MF (MissionFurniture) or PU (PowerUp)
-            pu_moves_back = 0
+            pu_moves_back = None
+            key = None
+            item_given = None
+            item_to_receive = None
+            item_to_deliver = None
 
             if object_type == 'LF':
                 # Read key value
@@ -569,7 +659,24 @@ class World:
                             interactables_so_far[stored_in_location] += [new_furniture]
                         else:
                             interactables_so_far[stored_in_location] = [new_furniture]
-                    elif object_type == 'I' or object_type == 'M':
+                    elif object_type == 'LF':
+                        # Create LockedFurniture object
+                        new_locked_furniture = LockedFurniture(name, points, key)
+                        # Add LockedFurniture to interactables_so_far
+                        if stored_in_location in interactables_so_far:
+                            interactables_so_far[stored_in_location] += [new_locked_furniture]
+                        else:
+                            interactables_so_far[stored_in_location] = [new_locked_furniture]
+                    elif object_type == 'MF':
+                        # Create MissionFurniture object
+                        new_mission_furniture = MissionFurniture(name, points, actions,
+                                                                 item_given, item_to_deliver, item_to_receive)
+                        # Add MissionFurniture to interactables_so_far
+                        if stored_in_location in interactables_so_far:
+                            interactables_so_far[stored_in_location] += [new_mission_furniture]
+                        else:
+                            interactables_so_far[stored_in_location] = [new_mission_furniture]
+                    elif object_type == 'I':
                         new_item = Item(name, points, actions, stored_in_furniture)
                         # Add Item to interactables_so_far
                         if stored_in_location in interactables_so_far:
@@ -591,7 +698,7 @@ class World:
                         else:
                             interactables_so_far[stored_in_location] = [new_powerup]
                     elif object_type == 'M':
-                        new_mission_item = MissionItem(name, points, actions)
+                        new_mission_item = MissionItem(name, points)
                         # Add MissionItem to interactables_so_far
                         if stored_in_location in interactables_so_far:
                             interactables_so_far[stored_in_location] += [new_mission_item]
@@ -631,4 +738,4 @@ class DirectionError(Exception):
     """Exception raised when direction is invalid."""
     def __str__(self) -> str:
         """Return a string representation of this error."""
-        return 'Invalid direction'
+        return 'Invalid direction.'
