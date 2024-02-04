@@ -78,13 +78,22 @@ class Location:
         self.interactables = []
         self.visited = False
 
-    def available_actions(self) -> str:
+    def get_available_actions(self) -> dict[str, list[str]]:
         """
-        Return the available actions in this location.
+        Return a mapping of each action that is available in this location
+        to each Item or Furniture NAME that the action can be performed on.
         The actions should depend on the items available in the location
         and the x,y position of this location on the world map.
         """
-        return "\n".join(self.available_actions)
+        available_actions_so_far = {}
+        for interactable in self.interactables:
+            # Add each action for the current interactable to accumulator
+            for action in interactable.actions:
+                if action in available_actions_so_far:
+                    available_actions_so_far[action] += [interactable.name]
+                else:
+                    available_actions_so_far[action] = [interactable.name]
+        return available_actions_so_far
 
     def available_interactables(self) -> str:
         """
@@ -111,6 +120,7 @@ class Location:
         """Prints this Location description.
         If this Location has not been visited, the long description is printed.
         Otherwise, the short description is printed."""
+        print(f'LOCATION {self.num}')
         if self.visited:
             self.get_brief()
             self.visited = True
@@ -732,6 +742,11 @@ class World:
         except IndexError:
             return None
 
+    def get_game_introduction(self) -> None:
+        """Prints the rules of the game to the console."""
+        print('ESCAPING UOFT')
+        print('How to Play:')
+        print('slkfaldjald')
 
 # --------- Exceptions ---------
 class DirectionError(Exception):

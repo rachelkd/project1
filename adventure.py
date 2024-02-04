@@ -23,30 +23,35 @@ from game_data import World, Item, Location, Player, Furniture
 
 # Note: You may add helper functions, classes, etc. here as needed
 
-# Note: You may modify the code below as needed; the following starter template are just suggestions
 if __name__ == "__main__":
     w = World(open("map.txt"), open("locations.txt"), open("items.txt"))
     p = Player(2, 4, w)  # set starting location of player; you may change the x, y coordinates here as appropriate
 
     menu = ["look", "inventory", "score", "quit", "back"]
 
+    # TODO: Make World method. Make sure to include menu in intro
+    print(w.get_game_introduction())
+    input('Press ENTER to continue.')
+
     while not p.victory:
         location = w.get_location(p.x, p.y)
 
-        # TODO: ENTER CODE HERE TO PRINT LOCATION DESCRIPTION
-        # Depending on whether or not it's been visited before,
-        # print either full description (first time visit) or brief description (every subsequent visit)
+        # Print location description depending on if player has visited before
+        location.visit()
+        available_actions = location.get_available_actions()
 
         print("What to do? \n")
-        print("[menu]")
-        for action in location.available_actions():
-            print(action)
-        choice = input("\nEnter action: ")
+        choice = input("\nEnter action: ").lower()
 
-        if choice == "[menu]":
+        if choice == "menu":
             print("Menu Options: \n")
             for option in menu:
                 print(option)
+            print(f'\nActions available at LOCATION {location.num}: \n')
+            for action in available_actions:
+                print(f'{action} [Additional argument, if applicable]')
+                # Print all Item or Furniture objects that an action can be performed on.
+                print('\t' + '\t'.join(available_actions[action]))
             choice = input("\nChoose action: ")
 
         # TODO: CALL A FUNCTION HERE TO HANDLE WHAT HAPPENS UPON THE PLAYER'S CHOICE
