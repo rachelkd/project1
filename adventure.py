@@ -35,24 +35,30 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
             world.move_player(player.x, player.y - 1, player)
             return
         elif arg == 'south':
-            w.move_player(p.x, p.y + 1, p)
+            world.move_player(player.x, player.y + 1, player)
+            return
         elif arg == 'east':
-            w.move_player(p.x + 1, p.y, p)
             world.move_player(player.x + 1, player.y, player)
             return
         elif arg == 'west':
-            w.move_player(p.x - 1, p.y, p)
+            world.move_player(player.x - 1, player.y, player)
+            return
         else:
             print('\nInvalid direction. Please go north, east, south, or west.')
     elif action_input == 'pick':
+        world.pick(player, player_location, arg)
+
     elif action_input == 'drop':
-<<<<<<< Updated upstream
-        w.drop(p, location, arg)
+        world.drop(player, player_location, arg)
     elif action_input == 'look':
         location.get_long()
-        world.drop(player, player_location, arg)
 
     else:
+        print('Invalid action.')
+
+    # Prompt player for action again
+    player_choice = input("\nChoose action: ")
+    do_action(world, player, player_location, player_choice)
 
 
 if __name__ == "__main__":
