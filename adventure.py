@@ -86,3 +86,20 @@ def do_action(w: World, p: Player, location: Location, choice: str) -> None:
         w.pick(p, location, arg)
     elif action == 'drop':
         w.drop(p, location, arg)
+
+
+def check_for_victory(p: Player) -> bool:
+    """
+    Checks for victory xd
+    """
+    at_exam_hall = (p.y == 4) and (p.x == 3)
+    has_all_items = []
+
+    for item in p.inventory:
+        if item.name == 'tcard' or item.name == 'cheat sheet' or item.name == 'lucky pen':
+            has_all_items += True
+
+    if at_exam_hall and (len(has_all_items) == 3) and p.moves < 60:
+        return True
+    else:
+        return False

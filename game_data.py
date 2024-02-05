@@ -401,15 +401,20 @@ class Player:
             The player's victory status
         - world:
             The world that this player is in.
+        - moves:
+            Number of moves the player has taken.
 
 
     Representation Invariants:
         - x
     """
 
+    x: int
+    y: int
     inventory: list[Item]
     victory: bool
     world: World
+    moves: int
 
     def __init__(self, x: int, y: int, world: World) -> None:
         """
