@@ -120,7 +120,7 @@ class Location:
         """Prints this Location description.
         If this Location has not been visited, the long description is printed.
         Otherwise, the short description is printed."""
-        print(f'LOCATION {self.num}')
+        print(f'\nLOCATION {self.num}')
         if self.visited:
             self.get_brief()
             self.visited = True
@@ -744,9 +744,55 @@ class World:
 
     def get_game_introduction(self) -> None:
         """Prints the rules of the game to the console."""
-        print('ESCAPING UOFT')
+        print('\n\nESCAPING UOFT\n')
         print('How to Play:')
-        print('slkfaldjald')
+        print('You have an important exam this evening. You\'ve been studying for weeks.\n'
+              'You realized that staying in your university residence, CampusOne, was not productive, so you '
+              'went to several different places yesterday.\n'
+              'But... it seems like you have lost your T-Card, lucky pen, and cheat sheet, and you '
+              'need those items for your exam.\n'
+              'Can you get those three items before your exam begins?\n')
+        print('Rules:')
+        print('At every location, type \"menu\" to see available actions you can perform.')
+        print('When you have found your items, head back to CampusOne to go to the Exam Center.\n')
+
+    def move_player(self, x: int, y: int, p: Player) -> None:
+        """Moves the given player to location at (x, y) in this world's map.
+        If the move is invalid (i.e., at a location number -1 or out of the bounds of the map)
+        then, a warning is given to the player.
+        """
+        # Check if
+
+    def pick(self, p: Player, location: Location, item_name: str) -> None:
+        """The named item is added to the given player's inventory if pick is valid.
+
+        Pick is valid when:
+            - item_name is the name of an Item object in the location, and
+            - the item that corresponds to item_name is not currently picked up, and
+            - the item that corresponds to item_name is not an instance of a MissionItem
+            - the item that corresponds to item_name is not in any locked LockedFurniture object.
+
+        Otherwise, nothing is done, and the player is given a warning.
+
+        Preconditions:
+            - self.get_location(p.x, p.y) is location
+        """
+        raise NotImplementedError
+
+    def drop(self, p: Player, location: Location, item_name: str) -> None:
+        """The named item is removed from the given player's inventory if drop is valid.
+        The corresponding Item is dropped in the location's interactables.
+
+        Drop is valid when:
+            - item_name is the name of an Item object in the player's inventory
+
+        Otherwise, nothing is done, and the player is given a warning.
+
+        Preconditions:
+            - self.get_location(p.x, p.y) is location
+        """
+        raise NotImplementedError
+
 
 # --------- Exceptions ---------
 class DirectionError(Exception):
