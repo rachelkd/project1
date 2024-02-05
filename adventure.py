@@ -24,14 +24,10 @@ from game_data import World, Item, Location, Player, Furniture
 # Note: You may add helper functions, classes, etc. here as needed
 
 
-def do_action(w: World, p: Player, location: Location, choice: str) -> None:
-    """Handles an action that a player executes in a given world based on player input."""
-    player_input = choice.lower().split()
     action_input = player_input[0]
     arg = ' '.join(player_input[1:])
     if action_input == 'go':
         if arg == 'north':
-            w.move_player(p.x, p.y - 1, p)
         elif arg == 'south':
             w.move_player(p.x, p.y + 1, p)
         elif arg == 'east':
@@ -41,11 +37,14 @@ def do_action(w: World, p: Player, location: Location, choice: str) -> None:
         else:
             print('\nInvalid direction. Please go north, east, south, or west.')
     elif action_input == 'pick':
-        w.pick(p, location, arg)
     elif action_input == 'drop':
+<<<<<<< Updated upstream
         w.drop(p, location, arg)
     elif action_input == 'look':
         location.get_long()
+        world.drop(player, player_location, arg)
+
+    else:
 
 
 if __name__ == "__main__":
@@ -77,8 +76,7 @@ if __name__ == "__main__":
             for action in available_actions:
                 print(f'{action} [argument]')
                 # Print all Item or Furniture objects that an action can be performed on.
-                print('\t' + '\t'.join(available_actions[action]) + '\n')
-            choice = input("\nChoose action: ")
+                print('\t' + ', '.join(available_actions[action]) + '\n')
 
         do_action(w, p, location, choice)
 

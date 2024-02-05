@@ -449,7 +449,11 @@ class Player:
         self.score = 0
 
     def add_to_inv(self, item: Item) -> None:
-        """Adds an Item to this player's inventory."""
+        """Adds an Item to this player's inventory.
+        Adds points if item has not been picked up before."""
+        if not item.picked_up:
+            self.score += item.points
+            item.picked_up = True
         self.inventory.append(item)
 
     def remove_from_inv(self, item: Item) -> None:
@@ -806,6 +810,10 @@ class World:
         Preconditions:
             - self.get_location(p.x, p.y) is location
         """
+        if not item_name:
+            print('Invalid item name.\n')
+            return
+
         # Search for provided item in the provided location
         for interactable in self.interactables[location.num]:
             if interactable.name == item_name and isinstance(interactable, Item) and not interactable.picked_up:
@@ -824,7 +832,7 @@ class World:
                         print(f'You have not completed the mission for {item.name}.')
                         return
                 # Handle Item in Furniture
-                elif not item.stored_in_furniture:
+                elif item.stored_in_furniture != '':
                     for furniture in self.interactables[location.num]:
                         if (isinstance(furniture, Furniture)
                                 and furniture.name == item.stored_in_furniture
@@ -834,9 +842,9 @@ class World:
                             self.interactables[location.num].remove(item)
                             print(item.actions['pick'])
                             return
-                        else:
-                            print(f'You cannot pick up {item.name} right now.')
-                            return
+                    # Furniture is not opened
+                    print(f'You cannot pick up {item.name} right now.')
+                    return
                 else:
                     p.add_to_inv(item)
                     location.interactables.remove(item)
