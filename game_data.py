@@ -74,8 +74,8 @@ class Location:
         self.points = points
         self.brief = brief
         self.long = long
-        self.available_actions = {}  # TODO: Get actions from all interactables
         self.interactables = []
+        self.available_actions = {}
         self.visited = False
 
     def get_available_actions(self) -> dict[str, list[str]]:
@@ -95,13 +95,6 @@ class Location:
                     available_actions_so_far[action] = [interactable.name]
         return available_actions_so_far
 
-    def available_interactables(self) -> str:
-        """
-        Return the available Items and Furnitures to interact with.
-        """
-        # TODO: Implement
-        return ''
-
     def get_coordinates(self, world: World) -> Optional[tuple[int, int]]:
         """Return coordinates of this location in a given world.
         If this location number is -1, then self.get_coordinates returns None.
@@ -118,14 +111,21 @@ class Location:
 
     def visit(self) -> None:
         """Prints this Location description.
+
         If this Location has not been visited, the long description is printed.
-        Otherwise, the short description is printed."""
+        Otherwise, the short description is printed.
+
+        An invalid location cannot be visited.
+
+        Preconditions:
+            - self.num != -1
+        """
         print(f'\nLOCATION {self.num}')
         if self.visited:
             self.get_brief()
-            self.visited = True
         else:
             self.get_long()
+            self.visited = True
 
     def get_brief(self) -> None:
         """Prints this Location's brief description to the console."""
@@ -426,34 +426,6 @@ class Player:
         self.inventory = []
         self.victory = False
 
-    def move(self, direction: str) -> None:
-        """
-        Moves the player one unit in the direction selected by the player. Possible directions are
-        (north, east, south, west).
-        """
-        if direction.lower() == 'north':
-            if self.world.map[self.y - 1][self.x] == -1:
-                pass
-            else:
-                self.y -= 1
-        elif direction.lower() == 'east':
-            if self.world.map[self.y][self.x + 1] == -1:
-                pass
-            else:
-                self.x += 1
-        elif direction.lower() == 'south':
-            if self.world.map[self.y + 1][self.x] == -1:
-                pass
-            else:
-                self.y = 1
-        elif direction.lower() == 'west':
-            if self.world.map[self.y][self.x - 1] == -1:
-                pass
-            else:
-                self.x -= 1
-        else:
-            print("This is not a valid direction. Try entering a valid one!")
-
     def add_to_inv(self, item: Item) -> None:
         """Adds an Item to this player's inventory."""
         self.inventory.append(item)
@@ -722,6 +694,18 @@ class World:
 
         return interactables_so_far
 
+    def add_interactables_to_locations(self) -> None:
+        """Add every interactable in this world to its corresponding location."""
+        for location_num in self.interactables:
+            for location in self.locations:
+                if location.num == location_num:
+                    location.interactables.extend(self.interactables[location_num])
+
+    def add_actions_to_locations(self) -> None:
+        """Add every action available in a location in this world to thatfo location's available_actions."""
+        for location in self.locations:
+            location.available_actions = location.get_available_actions()
+
     # NOTE: The method below is REQUIRED. Complete it exactly as specified.
     def get_location(self, x: int, y: int) -> Optional[Location]:
         """Return Location object associated with the coordinates (x, y) in the world map, if a valid location exists at
@@ -759,9 +743,31 @@ class World:
     def move_player(self, x: int, y: int, p: Player) -> None:
         """Moves the given player to location at (x, y) in this world's map.
         If the move is invalid (i.e., at a location number -1 or out of the bounds of the map)
-        then, a warning is given to the player.
+        then, a warning is printed to the console.
         """
-        # Check if
+        new_location = None
+
+        if x < 0 or y < 0:
+            location_num = -1
+        else:
+            # Get the location at (x, y)
+            try:
+                location_num = self.map[y][x]
+            except IndexError:
+                location_num = -1
+
+        for location in self.locations:
+            if location.num == location_num:
+                new_location = location
+
+        assert new_location is not None
+
+        # Check if location is valid
+        if new_location.num == -1:
+            new_location.get_brief()
+        else:  # Location is valid
+            p.x = x
+            p.y = y
 
     def pick(self, p: Player, location: Location, item_name: str) -> None:
         """The named item is added to the given player's inventory if pick is valid.

@@ -46,7 +46,7 @@ END
 50
 You are in an empty classroom in Bahen Center. There is a desk and blackboard. Return to the hallway to your South.
 You are in an empty classroom in Bahen Center. You notice a desk with a drawer that did not seem to close all the way.
-That's weird. Did a TA leave it open by accident?
+That's weird. Did a TA leave it open by accident? Return to the hallway to your South.
 END
 
 5

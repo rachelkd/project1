@@ -23,13 +23,37 @@ from game_data import World, Item, Location, Player, Furniture
 
 # Note: You may add helper functions, classes, etc. here as needed
 
+
+def do_action(w: World, p: Player, location: Location, choice: str) -> None:
+    """Handles an action that a player executes in a given world based on player input."""
+    player_input = choice.lower().split()
+    action_input = player_input[0]
+    arg = ' '.join(player_input[1:])
+    if action_input == 'go':
+        if arg == 'north':
+            w.move_player(p.x, p.y - 1, p)
+        elif arg == 'south':
+            w.move_player(p.x, p.y + 1, p)
+        elif arg == 'east':
+            w.move_player(p.x + 1, p.y, p)
+        elif arg == 'west':
+            w.move_player(p.x - 1, p.y, p)
+        else:
+            print('\nInvalid direction. Please go north, east, south, or west.')
+    elif action_input == 'pick':
+        w.pick(p, location, arg)
+    elif action_input == 'drop':
+        w.drop(p, location, arg)
+
+
 if __name__ == "__main__":
     w = World(open("map.txt"), open("locations.txt"), open("items.txt"))
     p = Player(2, 4, w)  # set starting location of player; you may change the x, y coordinates here as appropriate
+    w.add_interactables_to_locations()
+    w.add_actions_to_locations()
 
     menu = ["go", "look", "inventory", "score", "quit"]
 
-    # TODO: Make World method. Make sure to include menu in intro
     w.get_game_introduction()
     input('Press ENTER to continue.')
 
@@ -38,7 +62,7 @@ if __name__ == "__main__":
 
         # Print location description depending on if player has visited before
         location.visit()
-        available_actions = location.get_available_actions()
+        available_actions = location.available_actions
 
         print("What to do?\n")
         choice = input("\nEnter action: ").lower()
@@ -49,10 +73,12 @@ if __name__ == "__main__":
                 print(option)
             print(f'\nActions available at LOCATION {location.num}: \n')
             for action in available_actions:
-                print(f'{action} [Additional argument, if applicable]')
+                print(f'{action} [argument]')
                 # Print all Item or Furniture objects that an action can be performed on.
-                print('\t' + '\t'.join(available_actions[action]))
+                print('\t' + '\t'.join(available_actions[action]) + '\n')
             choice = input("\nChoose action: ")
+
+        do_action(w, p, location, choice)
 
         # TODO: CALL A FUNCTION HERE TO HANDLE WHAT HAPPENS UPON THE PLAYER'S CHOICE
         #  REMEMBER: the location = w.get_location(p.x, p.y) at the top of this loop will update the location if
@@ -64,25 +90,3 @@ if __name__ == "__main__":
         #  OR Check what type of action it is, then modify only player or location accordingly
         #  OR Method in Player class for move or updating inventory
         #  OR Method in Location class for updating location item info, or other location data etc....
-
-
-def do_action(w: World, p: Player, location: Location, choice: str) -> None:
-    """Handles an action that a player executes in a given world based on player input."""
-    player_input = choice.lower().split()
-    action_input = player_input[0]
-    arg = ' '.join(player_input[1:])
-    if action == 'go':
-        if arg == 'north':
-            w.move_player(p.x, p.y - 1, p)
-        elif arg == 'south':
-            w.move_player(p.x, p.y + 1, p)
-        elif arg == 'east':
-            w.move_player(p.x + 1, p.y, p)
-        elif arg == 'west':
-            w.move_player(p.x - 1, p.y, p)
-        else:
-            print('\nInvalid direction. Please go north, east, south, or west.')
-    elif action == 'pick':
-        w.pick(p, location, arg)
-    elif action == 'drop':
-        w.drop(p, location, arg)

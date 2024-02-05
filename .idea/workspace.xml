@@ -8,6 +8,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/adventure.py" beforeDir="false" afterPath="$PROJECT_DIR$/adventure.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/locations.txt" beforeDir="false" afterPath="$PROJECT_DIR$/locations.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,11 +29,12 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python.adventure.executor": "Run",
-    "Python.game_data.executor": "Run",
+    "Python.game_data.executor": "Debug",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
-    "last_opened_file_path": "/Users/rachel/Desktop/CSC111/csc111/assignments/project1"
+    "last_opened_file_path": "/Users/rachel/Desktop/CSC111/csc111/assignments/project1",
+    "settings.editor.selected.configurable": "preferences.keymap"
   }
 }]]></component>
   <component name="RunManager" selected="Python.adventure">
@@ -107,8 +109,18 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/adventure.py</url>
-          <line>54</line>
-          <option name="timeStamp" value="13" />
+          <line>80</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/adventure.py</url>
+          <line>59</line>
+          <option name="timeStamp" value="29" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/adventure.py</url>
+          <line>66</line>
+          <option name="timeStamp" value="30" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
