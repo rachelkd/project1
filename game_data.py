@@ -815,43 +815,46 @@ class World:
             return
 
         # Search for provided item in the provided location
-        for interactable in self.interactables[location.num]:
-            if interactable.name == item_name and isinstance(interactable, Item) and not interactable.picked_up:
-                item = interactable
+        try:
+            for interactable in self.interactables[location.num]:
+                if interactable.name == item_name and isinstance(interactable, Item) and not interactable.picked_up:
+                    item = interactable
 
-                # Handle MissionItem
-                if isinstance(item, MissionItem):
-                    # Check if mission has been completed:
-                    if item.mission_completed:
-                        p.add_to_inv(item)
-                        location.interactables.remove(item)
-                        self.interactables[location.num].remove(item)
-                        print(item.actions['pick'])
-                        return
-                    else:
-                        print(f'You have not completed the mission for {item.name}.')
-                        return
-                # Handle Item in Furniture
-                elif item.stored_in_furniture != '':
-                    for furniture in self.interactables[location.num]:
-                        if (isinstance(furniture, Furniture)
-                                and furniture.name == item.stored_in_furniture
-                                and furniture.opened):
+                    # Handle MissionItem
+                    if isinstance(item, MissionItem):
+                        # Check if mission has been completed:
+                        if item.mission_completed:
                             p.add_to_inv(item)
                             location.interactables.remove(item)
                             self.interactables[location.num].remove(item)
                             print(item.actions['pick'])
                             return
-                    # Furniture is not opened
-                    print(f'You cannot pick up {item.name} right now.')
-                    return
-                else:
-                    p.add_to_inv(item)
-                    location.interactables.remove(item)
-                    self.interactables[location.num].remove(item)
-                    print(item.actions['pick'])
-                    return
-        print(f'{item_name} is not an item at Location {location.num}!')
+                        else:
+                            print(f'You have not completed the mission for {item.name}.')
+                            return
+                    # Handle Item in Furniture
+                    elif item.stored_in_furniture != '':
+                        for furniture in self.interactables[location.num]:
+                            if (isinstance(furniture, Furniture)
+                                    and furniture.name == item.stored_in_furniture
+                                    and furniture.opened):
+                                p.add_to_inv(item)
+                                location.interactables.remove(item)
+                                self.interactables[location.num].remove(item)
+                                print(item.actions['pick'])
+                                return
+                        # Furniture is not opened
+                        print(f'You cannot pick up {item.name} right now.')
+                        return
+                    else:
+                        p.add_to_inv(item)
+                        location.interactables.remove(item)
+                        self.interactables[location.num].remove(item)
+                        print(item.actions['pick'])
+                        return
+            print(f'{item_name} is not an item at Location {location.num}!')
+        except KeyError:
+            print(f'{item_name} is not an item at Location {location.num}!')
 
     def drop(self, p: Player, location: Location, item_name: str) -> None:
         """The named item is removed from the given player's inventory if drop is valid.

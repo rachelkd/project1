@@ -20,16 +20,20 @@ This file is Copyright (c) 2024 CSC111 Teaching Team
 
 # Note: You may add in other import statements here as needed
 from game_data import World, Item, Location, Player, Furniture
+from typing import Optional
 
 # Note: You may add helper functions, classes, etc. here as needed
 
 
-def do_action(world: World, player: Player, player_location: Location, player_choice: str) -> None:
+def do_action(world: World, player: Player, player_location: Location, player_choice: str,
+              available_actions: Optional[dict[str, str]] = None, menu: Optional[list[str]] = None) -> None:
     """Handles an action that a player executes in a given world based on player input.
     If action is not a move function, then it prompts player for another action, and recursively calls this function."""
+
     player_input = player_choice.lower().split()
     action_input = player_input[0]
     arg = ' '.join(player_input[1:])
+
     if action_input == 'go':
         if arg == 'north':
             world.move_player(player.x, player.y - 1, player)
@@ -45,20 +49,32 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
             return
         else:
             print('\nInvalid direction. Please go north, east, south, or west.')
+
     elif action_input == 'pick':
         world.pick(player, player_location, arg)
 
     elif action_input == 'drop':
         world.drop(player, player_location, arg)
+
     elif action_input == 'look':
         location.get_long()
+
+    elif action_input == 'menu':
+        print("Menu Options: \n")
+        for option in menu:
+            print(option)
+        print(f'\nActions available at LOCATION {player_location.num}: \n')
+        for action in available_actions:
+            print(f'{action} [argument]')
+            # Print all Item or Furniture objects that an action can be performed on.
+            print('\t' + ', '.join(player_location.available_actions[action]) + '\n')
 
     else:
         print('Invalid action.')
 
     # Prompt player for action again
     player_choice = input("\nChoose action: ")
-    do_action(world, player, player_location, player_choice)
+    do_action(world, player, player_location, player_choice, available_actions, menu)
 
 
 if __name__ == "__main__":
@@ -70,6 +86,7 @@ if __name__ == "__main__":
     menu = ["go", "look", "inventory", "score", "quit"]
 
     w.get_game_introduction()
+    print(f'You can always type {', '.join(menu)} at any location.\n')
     input('Press ENTER to continue.')
 
     while not p.victory:
@@ -82,17 +99,7 @@ if __name__ == "__main__":
         print("What to do?\n")
         choice = input("\nEnter action: ").lower()
 
-        if choice == "menu":
-            print("Menu Options: \n")
-            for option in menu:
-                print(option)
-            print(f'\nActions available at LOCATION {location.num}: \n')
-            for action in available_actions:
-                print(f'{action} [argument]')
-                # Print all Item or Furniture objects that an action can be performed on.
-                print('\t' + ', '.join(available_actions[action]) + '\n')
-
-        do_action(w, p, location, choice)
+        do_action(w, p, location, choice, available_actions, menu)
 
         # TODO: CALL A FUNCTION HERE TO HANDLE WHAT HAPPENS UPON THE PLAYER'S CHOICE
         #  REMEMBER: the location = w.get_location(p.x, p.y) at the top of this loop will update the location if
