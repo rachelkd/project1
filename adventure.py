@@ -90,3 +90,20 @@ if __name__ == "__main__":
         #  OR Check what type of action it is, then modify only player or location accordingly
         #  OR Method in Player class for move or updating inventory
         #  OR Method in Location class for updating location item info, or other location data etc....
+
+
+def check_for_victory(p: Player) -> bool:
+    """
+    Checks for victory xd
+    """
+    at_exam_hall = (p.y == 4) and (p.x == 3)
+    has_all_items = []
+
+    for item in p.inventory:
+        if item.name == 'tcard' or item.name == 'cheat sheet' or item.name == 'lucky pen':
+            has_all_items += True
+
+    if at_exam_hall and (len(has_all_items) == 3) and p.moves < 60:
+        return True
+    else:
+        return False
