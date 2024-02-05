@@ -24,14 +24,22 @@ from game_data import World, Item, Location, Player, Furniture
 # Note: You may add helper functions, classes, etc. here as needed
 
 
+def do_action(world: World, player: Player, player_location: Location, player_choice: str) -> None:
+    """Handles an action that a player executes in a given world based on player input.
+    If action is not a move function, then it prompts player for another action, and recursively calls this function."""
+    player_input = player_choice.lower().split()
     action_input = player_input[0]
     arg = ' '.join(player_input[1:])
     if action_input == 'go':
         if arg == 'north':
+            world.move_player(player.x, player.y - 1, player)
+            return
         elif arg == 'south':
             w.move_player(p.x, p.y + 1, p)
         elif arg == 'east':
             w.move_player(p.x + 1, p.y, p)
+            world.move_player(player.x + 1, player.y, player)
+            return
         elif arg == 'west':
             w.move_player(p.x - 1, p.y, p)
         else:
