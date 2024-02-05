@@ -178,13 +178,15 @@ class Item:
         - picked_up:
             Indicates whether this item has ever been picked up by a player.
             True if it has ever been picked up. Otherwise, picked_up is False.
-        - cur_picked_up:
-            Indicates whether this item is currently picked up by a player.
-            True if currently picked up by player. Otherwise, False.
 
     Representation Invariants:
         - name != ""
     """
+    name: str
+    points: int
+    actions: dict[str, str]
+    stored_in_furniture: str
+    picked_up: bool
 
     def __init__(self, name: str, points: int, actions: Optional[dict[str, str]] = None,
                  stored_in_furniture: Optional[str] = None):
@@ -196,13 +198,12 @@ class Item:
         else:
             self.stored_in_furniture = ''
         self.picked_up = False
-        self.cur_picked_up = False
         if actions:
             for action in actions:
                 self.add_action(action, actions[action])
 
     def add_action(self, action: str, argument: str):
-        """Add or mutate an action in self.actions.
+        """Helper function for self.__init__. Add or mutate an action in self.actions.
         If the action is pick or drop, then the action argument must
         be appended to the actions.
         """
@@ -211,26 +212,15 @@ class Item:
         else:
             self.actions[action] = argument
 
-    def execute_action(self, action: str, player: Player) -> str:
-        """Execute an action for this item."""
-        if action in self.actions:
-            if action == 'pick':
-                self.pick(player)
-        return ''
+    def do_action(self, action: str) -> None:
+        """Execute an action for this item.
 
-    def pick(self, player: Player):
-        """Adds this item to the given player's inventory."""
-        # Check if item is in player inventory
-        if not self.cur_picked_up and self in player.inventory:
-            player.add_to_inv(self)
-            self.picked_up = True
-            self.cur_picked_up = True
-
-    def drop(self, player: Player):
-        """Removes this item from the given player's inventory."""
-        if self.cur_picked_up and self in player.inventory:
-            player.remove_from_inv(self)
-            self.cur_picked_up = False
+        Preconditions:
+            - action != 'pick'
+            - action != 'drop'
+            - action in self.actions
+        """
+        print(self.actions[action])
 
     def get_actions(self) -> None:
         """Prints all action keys for this item."""
@@ -295,6 +285,8 @@ class Furniture:
         - actions:
             A mapping representation of actions to their text output when
             action is performed
+        - opened:
+            Indicates whether this furniture has been opened.
 
     Representation Invariants:
         - name != ''
@@ -304,6 +296,7 @@ class Furniture:
     points: int
     items: list[Item]
     actions: dict[str, str]
+    opened: bool
 
     def __init__(self, name: str, points: int, actions: dict[str, str] = None) -> None:
         """Initialize a new Furniture.
@@ -315,10 +308,15 @@ class Furniture:
             self.actions = actions
         else:
             self.actions = {}
+        self.opened = False
 
     def add_actions(self, action: str, output: str) -> None:
         """Add an action to this Furniture."""
         self.actions[action] = output
+
+    def open(self) -> None:
+        """Opens this Furniture and sets this opened attribute to True."""
+        self.opened = True
 
 
 class LockedFurniture(Furniture):
@@ -334,25 +332,40 @@ class LockedFurniture(Furniture):
         - items:
             A list of items that can be found inside of this locked furniture.
             If there are no items in this Furniture, the list is empty.
-        - is_unlocked:
+        - opened:
             Indicates whether this LockedFurniture is unlocked.
 
     Representation Invariants:
         - name != ''
         - points >= 0
     """
+    name: str
+    points: int
+    key: str
+    items: list[Item]
+    actions = dict[str, str]
+    opened = bool
 
-    def __init__(self, name: str, points: int, key: str, items: Optional[list[Item]] = None) -> None:
+    def __init__(self, name: str, points: int, key: str) -> None:
         """Initialize a new LockedFurniture.
         """
         # open_arg = 'You '
         super().__init__(name, points, {'open': f'You have opened {name}'})
-        self.items = []
         self.key = key
         # If items is not None, add it to self.items
-        if items:
-            for item in items:
-                self.items.append(item)
+        # if items:
+        #     for item in items:
+        #         self.items.append(item)
+        self.opened = False
+
+    def open(self, key: Optional[str] = None) -> None:
+        """Opens this Furniture and sets opened attribute to True if
+        provided key matches this key attribute."""
+        if key == self.key:
+            self.opened = True
+            print(self.actions['open'])
+        else:
+            print(f'Incorrect key. Try again by calling \"open {self.name}\".')
 
 
 class MissionFurniture(Furniture):
@@ -778,17 +791,55 @@ class World:
         """The named item is added to the given player's inventory if pick is valid.
 
         Pick is valid when:
-            - item_name is the name of an Item object in the location, and
-            - the item that corresponds to item_name is not currently picked up, and
-            - the item that corresponds to item_name is not an instance of a MissionItem
-            - the item that corresponds to item_name is not in any locked LockedFurniture object.
+            - item_name is the name of an Item in the given location, and
+            - the given player is in the given location, and
+            - the Item that corresponds to item_name is not currently picked up, and
+            - if item is in LockedFurniture, then LockedFurniture is unlocked
+            - if item is a MissionItem, then the mission has been completed
 
         Otherwise, nothing is done, and the player is given a warning.
 
         Preconditions:
             - self.get_location(p.x, p.y) is location
         """
-        raise NotImplementedError
+        # Search for provided item in the provided location
+        for interactable in self.interactables[location.num]:
+            if interactable.name == item_name and isinstance(interactable, Item) and not interactable.picked_up:
+                item = interactable
+
+                # Handle MissionItem
+                if isinstance(item, MissionItem):
+                    # Check if mission has been completed:
+                    if item.mission_completed:
+                        p.add_to_inv(item)
+                        location.interactables.remove(item)
+                        self.interactables[location.num].remove(item)
+                        print(item.actions['pick'])
+                        return
+                    else:
+                        print(f'You have not completed the mission for {item.name}.')
+                        return
+                # Handle Item in Furniture
+                elif not item.stored_in_furniture:
+                    for furniture in self.interactables[location.num]:
+                        if (isinstance(furniture, Furniture)
+                                and furniture.name == item.stored_in_furniture
+                                and furniture.opened):
+                            p.add_to_inv(item)
+                            location.interactables.remove(item)
+                            self.interactables[location.num].remove(item)
+                            print(item.actions['pick'])
+                            return
+                        else:
+                            print(f'You cannot pick up {item.name} right now.')
+                            return
+                else:
+                    p.add_to_inv(item)
+                    location.interactables.remove(item)
+                    self.interactables[location.num].remove(item)
+                    print(item.actions['pick'])
+                    return
+        print(f'{item_name} is not an item at Location {location.num}!')
 
     def drop(self, p: Player, location: Location, item_name: str) -> None:
         """The named item is removed from the given player's inventory if drop is valid.
@@ -803,11 +854,3 @@ class World:
             - self.get_location(p.x, p.y) is location
         """
         raise NotImplementedError
-
-
-# --------- Exceptions ---------
-class DirectionError(Exception):
-    """Exception raised when direction is invalid."""
-    def __str__(self) -> str:
-        """Return a string representation of this error."""
-        return 'Invalid direction.'

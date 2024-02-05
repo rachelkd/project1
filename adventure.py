@@ -97,13 +97,17 @@ def check_for_victory(p: Player) -> bool:
     Checks for victory xd
     """
     at_exam_hall = (p.y == 4) and (p.x == 3)
-    has_all_items = []
+    has_all_items = [False, False, False]
 
     for item in p.inventory:
-        if item.name == 'tcard' or item.name == 'cheat sheet' or item.name == 'lucky pen':
-            has_all_items += True
+        if item.name == 'tcard':
+            has_all_items[0] = True
+        if item.name == 'cheat sheet':
+            has_all_items[1] = True
+        if item.name == 'lucky pen':
+            has_all_items[2] = True
 
-    if at_exam_hall and (len(has_all_items) == 3) and p.moves < 60:
+    if at_exam_hall and (all(status for status in has_all_items)) and p.moves < 60:
         return True
     else:
         return False
