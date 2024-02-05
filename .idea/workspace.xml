@@ -5,10 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b2273764-ca3f-4536-a3e1-0d6e7c9411d4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc 2.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/adventure.py" beforeDir="false" afterPath="$PROJECT_DIR$/adventure.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/game_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/game_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/locations.txt" beforeDir="false" afterPath="$PROJECT_DIR$/locations.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,7 +31,7 @@
     "Python.game_data.executor": "Debug",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
+    "git-widget-placeholder": "Merging master",
     "last_opened_file_path": "/Users/rachel/Desktop/CSC111/csc111/assignments/project1",
     "settings.editor.selected.configurable": "preferences.keymap"
   }
@@ -111,16 +110,6 @@
           <url>file://$PROJECT_DIR$/adventure.py</url>
           <line>80</line>
           <option name="timeStamp" value="28" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/adventure.py</url>
-          <line>59</line>
-          <option name="timeStamp" value="29" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/adventure.py</url>
-          <line>66</line>
-          <option name="timeStamp" value="30" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
