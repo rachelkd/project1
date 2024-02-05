@@ -44,6 +44,8 @@ def do_action(w: World, p: Player, location: Location, choice: str) -> None:
         w.pick(p, location, arg)
     elif action_input == 'drop':
         w.drop(p, location, arg)
+    elif action_input == 'look':
+        location.get_long()
 
 
 if __name__ == "__main__":

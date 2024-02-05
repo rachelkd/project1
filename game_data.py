@@ -416,10 +416,12 @@ class Player:
             The world that this player is in.
         - moves:
             Number of moves the player has taken.
+        - score:
+            The player's score
 
 
     Representation Invariants:
-        - x
+        -
     """
 
     x: int
@@ -428,6 +430,7 @@ class Player:
     victory: bool
     world: World
     moves: int
+    score: int
 
     def __init__(self, x: int, y: int, world: World) -> None:
         """
@@ -443,6 +446,7 @@ class Player:
         self.y = y
         self.inventory = []
         self.victory = False
+        self.score = 0
 
     def add_to_inv(self, item: Item) -> None:
         """Adds an Item to this player's inventory."""
