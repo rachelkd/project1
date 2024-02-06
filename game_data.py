@@ -447,6 +447,7 @@ class Player:
         self.inventory = []
         self.victory = False
         self.score = 0
+        self.moves = 0
 
     def add_to_inv(self, item: Item) -> None:
         """Adds an Item to this player's inventory.
@@ -794,6 +795,7 @@ class World:
         else:  # Location is valid
             p.x = x
             p.y = y
+            p.moves += 1
 
     def pick(self, p: Player, location: Location, item_name: str) -> None:
         """The named item is added to the given player's inventory if pick is valid.
@@ -868,4 +870,7 @@ class World:
         Preconditions:
             - self.get_location(p.x, p.y) is location
         """
+        # TODO: JEHA PARK PLEASE DO
+        #  remove item from inventory using World.remove_from_inv
+        #  ADD ITEM BACK TO Location.interactables
         raise NotImplementedError

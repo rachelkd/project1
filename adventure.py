@@ -55,9 +55,25 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
 
     elif action_input == 'drop':
         world.drop(player, player_location, arg)
+        # TODO: JEHA PARK
+        #  see def drop in World method
+        #  arg is the item NAME btw
 
     elif action_input == 'look':
         location.get_long()
+
+    elif action_input == 'quit':
+        pass
+        # TODO: JEHA PARK
+        #  add another condition to the while loop in this file __main__?
+        #  set it to True by default then false if person types quit
+        #  we might also need another boolean to check if player has lost the game
+        #  i.e., too many moves then print that they've missed their exam or whatever
+
+    elif action_input == 'inventory':
+        pass
+        # TODO: JEHA PARK
+        #  print out all items in player's inventory
 
     elif action_input == 'menu':
         print("Menu Options: \n")
