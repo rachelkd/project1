@@ -137,6 +137,8 @@ def check_for_victory(p: Player) -> bool:
 
 
 if __name__ == "__main__":
+    quit_game = False
+
     w = World(open("map.txt"), open("locations.txt"), open("items.txt"))
     p = Player(2, 4, w)  # set starting location of player; you may change the x, y coordinates here as appropriate
     w.add_interactables_to_locations()
@@ -148,7 +150,7 @@ if __name__ == "__main__":
     print(f'You can always type {', '.join(menu)} at any location.\n')
     input('Press ENTER to continue.')
 
-    while not p.victory:
+    while not p.victory and p.moves < 60 and not quit_game:
         location = w.get_location(p.x, p.y)
 
         # Print location description depending on if player has visited before
@@ -161,3 +163,12 @@ if __name__ == "__main__":
         do_action(w, p, location, choice, available_actions, menu)
         if check_for_victory(p):
             p.victory = True
+
+    if p.victory:
+        print('\x1B[3mSome time later...\x1B[0m')
+        print('You made it to your exam in time with all your items.')
+        print('You feel pretty confident about how you did! The studying paid off, hopefully.')
+    else:
+        print('You took too long to get to your exam. You missed it.')
+
+    print(f'Score: {p.score}')
