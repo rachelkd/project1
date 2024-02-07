@@ -49,19 +49,15 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
             return
         else:
             print('\nInvalid direction. Please go north, east, south, or west.')
-
     elif action_input == 'pick':
         world.pick(player, player_location, arg)
-
     elif action_input == 'drop':
         world.drop(player, player_location, arg)
         # TODO: JEHA PARK
         #  see def drop in World method
         #  arg is the item NAME btw
-
     elif action_input == 'look':
         location.get_long()
-
     elif action_input == 'quit':
         pass
         # TODO: JEHA PARK
@@ -69,16 +65,13 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
         #  set it to True by default then false if person types quit
         #  we might also need another boolean to check if player has lost the game
         #  i.e., too many moves then print that they've missed their exam or whatever
-
     elif action_input == 'inventory':
         pass
         # TODO: JEHA PARK
         #  print out all items in player's inventory
-
     elif action_input == 'open':
         # TODO: Rachel
-        w.open(p, location, arg)
-
+        w.open(location, arg)
     elif action_input == 'menu':
         print("Menu Options: \n")
         for option in menu:
@@ -88,7 +81,27 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
             print(f'{action} [argument]')
             # Print all Item or Furniture objects that an action can be performed on.
             print('\t' + ', '.join(player_location.available_actions[action]) + '\n')
-
+    elif any(action_input == action for action in available_actions):
+        obj = None
+        # Check if item is in inventory
+        if arg in {item.name for item in player.inventory}:
+            for item in player.inventory:
+                if item.name == arg:
+                    obj = item
+                    break
+        # Check if interactable is in location
+        else:
+            for interactable in location.interactables:
+                if interactable.name == arg:
+                    obj = interactable
+                    break
+        if obj:
+            if isinstance(obj, Item):
+                obj.do_action(player, action_input)
+            else:
+                obj.do_action(world, player, player_location, action_input)
+        else:
+            print(f'{arg} does not exist in your inventory or at this location.')
     else:
         print('Invalid action.')
 

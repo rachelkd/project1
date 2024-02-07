@@ -212,15 +212,21 @@ class Item:
         else:
             self.actions[action] = argument
 
-    def do_action(self, action: str) -> None:
-        """Execute an action for this item.
+    def do_action(self, p: Player, action: str) -> None:
+        """Execute an action for this item if action is valid.
+
+        An action is valid when:
+            - the given player, p, has picked up this Item
 
         Preconditions:
             - action != 'pick'
             - action != 'drop'
             - action in self.actions
         """
-        print(self.actions[action])
+        if self in p.inventory:
+            print(self.actions[action].replace('\\n', '\n'))  # Replace \\n with new line escape character
+        else:
+            print('You cannot do that yet. Try picking up this item.')
 
     def get_actions(self) -> None:
         """Prints all action keys for this item."""
@@ -317,6 +323,26 @@ class Furniture:
     def open(self) -> None:
         """Opens this Furniture and sets this opened attribute to True."""
         self.opened = True
+        print(self.actions['open'])
+        print('Items stored in this furniture:')
+        for item in self.items:
+            print(f'\t- {item}')
+
+    def do_action(self, w: World, p: Player, location: Location, action: str) -> None:
+        """Executes an action if it is valid.
+
+        An action is valid if:
+            - player is in the location
+            - this Furniture is in the location
+
+        Preconditions:
+            - action != ''
+        """
+        if w.get_location(p.x, p.y) is location and self in location.interactables:
+            if action in self.actions:
+                print(self.actions[action])
+            else:
+                print(f'{action} cannot be performed on {self.name}.')
 
 
 class LockedFurniture(Furniture):
@@ -366,6 +392,9 @@ class LockedFurniture(Furniture):
         if key == self.key:
             self.opened = True
             print(self.actions['open'])
+            print('Items stored in this furniture:')
+            for item in self.items:
+                print(f'\t- {item}')
         else:
             print(f'Incorrect key. Try again by calling \"open {self.name}\".')
 
@@ -457,6 +486,9 @@ class Player:
         if not item.picked_up:
             self.score += item.points
             item.picked_up = True
+        # Handle PowerUp
+        if isinstance(item, PowerUp):
+            self.moves += item.moves_back
         self.inventory.append(item)
 
     def remove_from_inv(self, item: Item) -> None:
@@ -857,7 +889,7 @@ class World:
                         # Furniture is not opened
                         print(f'You cannot pick up {item.name} right now.')
                         return
-                    else:
+                    else:  # Handle Item
                         p.add_to_inv(item)
                         location.interactables.remove(item)
                         self.interactables[location.num].remove(item)
@@ -885,29 +917,33 @@ class World:
         #  ADD ITEM BACK TO Location.interactables
         raise NotImplementedError
 
-    def open(self, p: Player, location: Location, furniture_name: str) -> None:
+    def open(self, location: Location, furniture_name: str) -> None:
         """The named furniture is opened if open is valid.
+        If there are items inside the Furniture, those items are printed.
 
         Open is valid when:
             - furniture_name is the name of Furniture in the given location
-            - the given player, p, is in the given location
+            - open is an action for the corresponding Furniture object
 
         Otherwise, nothing is done, and the player is given a warning.
 
         Preconditions:
-            - self.get_location(p.x, p.y) is location
+            - player is located at location
         """
         try:
             for interactable in self.interactables[location.num]:
                 if (interactable.name == furniture_name
                         and isinstance(interactable, Furniture)):
                     furniture = interactable
-
-                    # Check if furniture has already been opened
-                    if furniture.opened:
-                        print(f'You have already opened {furniture_name}.')
-                        return
+                    if 'open' in furniture.actions:
+                        # Check if furniture has already been opened
+                        if furniture.opened:
+                            print(f'You have already opened {furniture_name}.')
+                            return
+                        else:
+                            furniture.open()
+                            return
                     else:
-                        furniture.open()
+                        print(f'{furniture_name} cannot be opened.')
         except KeyError:
             print(f'{furniture_name} does not exist at location {location.num}.')

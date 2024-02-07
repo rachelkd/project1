@@ -30,8 +30,7 @@ END
 F
 desk
 10
-open:::You have opened the desk.
-close:::You have closed the desk.
+open:::You have opened the desk drawer.
 END
 
 4
@@ -103,7 +102,7 @@ END
 
 8
 MF
-key,cash,pen
+key,cash,lucky pen
 food truck
 20
 examine:::FOOD TRUCK WORKER: Hey, do me a favour, will you? Take this key. Bring it to ------ (you can't hear him because of his accent).
