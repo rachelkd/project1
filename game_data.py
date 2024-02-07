@@ -326,7 +326,7 @@ class Furniture:
         print(self.actions['open'])
         print('Items stored in this furniture:')
         for item in self.items:
-            print(f'\t- {item}')
+            print(f'\t- {item.name}')
 
     def do_action(self, w: World, p: Player, location: Location, action: str) -> None:
         """Executes an action if it is valid.
