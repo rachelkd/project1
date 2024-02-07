@@ -350,7 +350,7 @@ class LockedFurniture(Furniture):
         """Initialize a new LockedFurniture.
         """
         # open_arg = 'You '
-        super().__init__(name, points, {'open': f'You have opened {name}'})
+        super().__init__(name, points, {'open': f'You have opened {name}.'})
         self.key = key
         # If items is not None, add it to self.items
         # if items:
@@ -358,9 +358,11 @@ class LockedFurniture(Furniture):
         #         self.items.append(item)
         self.opened = False
 
-    def open(self, key: Optional[str] = None) -> None:
-        """Opens this Furniture and sets opened attribute to True if
+    def open(self) -> None:
+        """Opens this Furniture and prompts player for key.
+        Sets this opened attribute to True if
         provided key matches this key attribute."""
+        key = input('What is the key?\n')
         if key == self.key:
             self.opened = True
             print(self.actions['open'])
@@ -816,6 +818,12 @@ class World:
             print('Invalid item name.\n')
             return
 
+        # Check if item is already in player inventory
+        for item in p.inventory:
+            if item.name == item_name:
+                print(f'You have already picked up {item_name}.')
+                return
+
         # Search for provided item in the provided location
         try:
             for interactable in self.interactables[location.num]:
@@ -836,6 +844,7 @@ class World:
                             return
                     # Handle Item in Furniture
                     elif item.stored_in_furniture != '':
+                        # assert item.stored_in_furniture in {}
                         for furniture in self.interactables[location.num]:
                             if (isinstance(furniture, Furniture)
                                     and furniture.name == item.stored_in_furniture
@@ -854,13 +863,14 @@ class World:
                         self.interactables[location.num].remove(item)
                         print(item.actions['pick'])
                         return
-            print(f'{item_name} is not an item at Location {location.num}!')
         except KeyError:
-            print(f'{item_name} is not an item at Location {location.num}!')
+            pass
+
+        print(f'{item_name} is not an item at Location {location.num}!')
 
     def drop(self, p: Player, location: Location, item_name: str) -> None:
         """The named item is removed from the given player's inventory if drop is valid.
-        The corresponding Item is dropped in the location's interactables.
+        The corresponding Item is removed in the location's interactables.
 
         Drop is valid when:
             - item_name is the name of an Item object in the player's inventory
@@ -874,3 +884,30 @@ class World:
         #  remove item from inventory using World.remove_from_inv
         #  ADD ITEM BACK TO Location.interactables
         raise NotImplementedError
+
+    def open(self, p: Player, location: Location, furniture_name: str) -> None:
+        """The named furniture is opened if open is valid.
+
+        Open is valid when:
+            - furniture_name is the name of Furniture in the given location
+            - the given player, p, is in the given location
+
+        Otherwise, nothing is done, and the player is given a warning.
+
+        Preconditions:
+            - self.get_location(p.x, p.y) is location
+        """
+        try:
+            for interactable in self.interactables[location.num]:
+                if (interactable.name == furniture_name
+                        and isinstance(interactable, Furniture)):
+                    furniture = interactable
+
+                    # Check if furniture has already been opened
+                    if furniture.opened:
+                        print(f'You have already opened {furniture_name}.')
+                        return
+                    else:
+                        furniture.open()
+        except KeyError:
+            print(f'{furniture_name} does not exist at location {location.num}.')

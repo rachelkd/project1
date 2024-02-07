@@ -75,6 +75,10 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
         # TODO: JEHA PARK
         #  print out all items in player's inventory
 
+    elif action_input == 'open':
+        # TODO: Rachel
+        w.open(p, location, arg)
+
     elif action_input == 'menu':
         print("Menu Options: \n")
         for option in menu:
