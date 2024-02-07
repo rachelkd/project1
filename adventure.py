@@ -70,8 +70,13 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
         # TODO: JEHA PARK
         #  print out all items in player's inventory
     elif action_input == 'open':
-        # TODO: Rachel
-        w.open(location, arg)
+        if 'open' not in available_actions:
+            print('Nothing can be opened in this location.')
+        elif arg in available_actions['open']:
+            w.open(location, arg)
+        else:
+            print(f'You cannot open a {arg}.')
+
     elif action_input == 'menu':
         print("Menu Options: \n")
         for option in menu:
