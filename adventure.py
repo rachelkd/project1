@@ -57,14 +57,7 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
     elif action_input == 'look':
         location.get_long()
     elif action_input == 'quit':
-<<<<<<< HEAD
         return
-        # TODO: JEHA PARK
-        #  add another condition to the while loop in this file __main__?
-        #  set it to True by default then false if person types quit
-=======
-
->>>>>>> bf09216a7da5025a90f46d35fd9c146f4b4ec191
     elif action_input == 'inventory':
         inv = []
         for item in p.inventory:
