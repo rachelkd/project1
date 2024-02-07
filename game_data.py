@@ -912,10 +912,13 @@ class World:
         Preconditions:
             - self.get_location(p.x, p.y) is location
         """
-        # TODO: JEHA PARK PLEASE DO
-        #  remove item from inventory using World.remove_from_inv
-        #  ADD ITEM BACK TO Location.interactables
-        raise NotImplementedError
+        for item in p.inventory:
+            if item_name == item.name:
+                p.remove_from_inv(item)
+                location.interactables.append(item)
+                return
+
+        print(f'{item_name} is not in your inventory.')
 
     def open(self, location: Location, furniture_name: str) -> None:
         """The named furniture is opened if open is valid.
