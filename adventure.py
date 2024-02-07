@@ -60,17 +60,20 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
     elif action_input == 'quit':
         return 1
     elif action_input == 'score':
-        return p.score
+        print(f'Score: {p.score}')
     elif action_input == 'inventory':
         inv = []
         for item in p.inventory:
             inv.append(item.name)
-        print(', '.join(inv))
+        if not inv:
+            print('Inventory is empty.')
+        else:
+            print(', '.join(inv))
     elif action_input == 'open':
         if 'open' not in available_actions:
             print('Nothing can be opened in this location.')
         elif arg in available_actions['open']:
-            w.open(location, arg)
+            w.open(p, location, arg)
         else:
             print(f'You cannot open a {arg}.')
 
@@ -99,9 +102,15 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
                     break
         if obj:
             if isinstance(obj, Item):
-                obj.do_action(player, action_input)
+                if action_input in obj.actions:
+                    obj.do_action(player, action_input)
+                else:
+                    print('You cannot do that action on this object.')
             else:
-                obj.do_action(world, player, player_location, action_input)
+                if action_input in obj.actions:
+                    obj.do_action(world, player, player_location, action_input)
+                else:
+                    print('You cannot do that action on this object.')
         else:
             print(f'{arg} does not exist in your inventory or at this location.')
     else:

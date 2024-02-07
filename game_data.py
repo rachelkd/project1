@@ -321,8 +321,12 @@ class Furniture:
         """Add an action to this Furniture."""
         self.actions[action] = output
 
-    def open(self) -> None:
-        """Opens this Furniture and sets this opened attribute to True."""
+    def open(self, p: Player) -> None:
+        """Opens this Furniture and sets this opened attribute to True.
+        Add points if this is the first time opening.
+        """
+        if not self.opened:
+            p.score += self.points
         self.opened = True
         print(self.actions['open'])
         print('Items stored in this furniture:')
@@ -385,17 +389,19 @@ class LockedFurniture(Furniture):
         #         self.items.append(item)
         self.opened = False
 
-    def open(self) -> None:
+    def open(self, p: Player) -> None:
         """Opens this Furniture and prompts player for key.
         Sets this opened attribute to True if
         provided key matches this key attribute."""
         key = input('What is the key?\n')
         if key == self.key:
+            if not self.opened:
+                p.score += self.points
             self.opened = True
             print(self.actions['open'])
             print('Items stored in this furniture:')
             for item in self.items:
-                print(f'\t- {item}')
+                print(f'\t- {item.name}')
         else:
             print(f'Incorrect key. Try again by calling \"open {self.name}\".')
 
@@ -497,6 +503,7 @@ class Player:
         for i in range(0, len(self.inventory)):
             if self.inventory[i] == item:
                 self.inventory.pop(i)
+                return
 
 
 class World:
@@ -860,7 +867,7 @@ class World:
         # Search for provided item in the provided location
         try:
             for interactable in self.interactables[location.num]:
-                if interactable.name == item_name and isinstance(interactable, Item) and not interactable.picked_up:
+                if interactable.name == item_name and isinstance(interactable, Item):
                     item = interactable
 
                     # Handle MissionItem
@@ -916,12 +923,15 @@ class World:
         for item in p.inventory:
             if item_name == item.name:
                 p.remove_from_inv(item)
+                item.stored_in_furniture = ''
                 location.interactables.append(item)
+                self.interactables[location.num].append(item)
+                print(item.actions['drop'])
                 return
 
         print(f'{item_name} is not in your inventory.')
 
-    def open(self, location: Location, furniture_name: str) -> None:
+    def open(self, p: Player, location: Location, furniture_name: str) -> None:
         """The named furniture is opened if open is valid.
         If there are items inside the Furniture, those items are printed.
 
@@ -945,7 +955,7 @@ class World:
                             print(f'You have already opened {furniture_name}.')
                             return
                         else:
-                            furniture.open()
+                            furniture.open(p)
                             return
                     else:
                         print(f'{furniture_name} cannot be opened.')
