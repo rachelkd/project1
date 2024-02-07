@@ -63,12 +63,11 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
         # TODO: JEHA PARK
         #  add another condition to the while loop in this file __main__?
         #  set it to True by default then false if person types quit
-        #  we might also need another boolean to check if player has lost the game
-        #  i.e., too many moves then print that they've missed their exam or whatever
     elif action_input == 'inventory':
-        pass
-        # TODO: JEHA PARK
-        #  print out all items in player's inventory
+        inv = []
+        for item in p.inventory:
+            inv.append(item.name)
+        print(', '.join(inv))
     elif action_input == 'open':
         if 'open' not in available_actions:
             print('Nothing can be opened in this location.')
