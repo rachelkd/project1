@@ -109,7 +109,7 @@ class Location:
                 if world.map[y][x] == self.num:
                     return x, y
 
-    def visit(self) -> None:
+    def visit(self, p: Player) -> None:
         """Prints this Location description.
 
         If this Location has not been visited, the long description is printed.
@@ -126,6 +126,7 @@ class Location:
         else:
             self.get_long()
             self.visited = True
+            p.score += self.points
 
     def get_brief(self) -> None:
         """Prints this Location's brief description to the console."""

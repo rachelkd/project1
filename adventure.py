@@ -153,6 +153,8 @@ if __name__ == "__main__":
 
         # Print location description depending on if player has visited before
         location.visit()
+        # Add points if player first time visiting
+        location.visit(p)
         available_actions = location.available_actions
 
         print("What to do?\n")
