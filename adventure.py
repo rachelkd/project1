@@ -115,6 +115,27 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
     do_action(world, player, player_location, player_choice, available_actions, menu)
 
 
+def check_for_victory(p: Player) -> bool:
+    """
+    Checks for victory xd
+    """
+    at_exam_hall = (p.y == 4) and (p.x == 3)
+    has_all_items = [False, False, False]
+
+    for item in p.inventory:
+        if item.name == 'tcard':
+            has_all_items[0] = True
+        if item.name == 'cheat sheet':
+            has_all_items[1] = True
+        if item.name == 'lucky pen':
+            has_all_items[2] = True
+
+    if at_exam_hall and (all(status for status in has_all_items)) and p.moves < 60:
+        return True
+    else:
+        return False
+
+
 if __name__ == "__main__":
     w = World(open("map.txt"), open("locations.txt"), open("items.txt"))
     p = Player(2, 4, w)  # set starting location of player; you may change the x, y coordinates here as appropriate
@@ -138,35 +159,5 @@ if __name__ == "__main__":
         choice = input("\nEnter action: ").lower()
 
         do_action(w, p, location, choice, available_actions, menu)
-
-        # TODO: CALL A FUNCTION HERE TO HANDLE WHAT HAPPENS UPON THE PLAYER'S CHOICE
-        #  REMEMBER: the location = w.get_location(p.x, p.y) at the top of this loop will update the location if
-        #  the choice the player made was just a movement, so only updating player's position is enough to change the
-        #  location to the next appropriate location
-        #  Possibilities:
-        #  A helper function such as do_action(w, p, location, choice)
-        #  OR A method in World class w.do_action(p, location, choice)
-        #  OR Check what type of action it is, then modify only player or location accordingly
-        #  OR Method in Player class for move or updating inventory
-        #  OR Method in Location class for updating location item info, or other location data etc....
-
-
-def check_for_victory(p: Player) -> bool:
-    """
-    Checks for victory xd
-    """
-    at_exam_hall = (p.y == 4) and (p.x == 3)
-    has_all_items = [False, False, False]
-
-    for item in p.inventory:
-        if item.name == 'tcard':
-            has_all_items[0] = True
-        if item.name == 'cheat sheet':
-            has_all_items[1] = True
-        if item.name == 'lucky pen':
-            has_all_items[2] = True
-
-    if at_exam_hall and (all(status for status in has_all_items)) and p.moves < 60:
-        return True
-    else:
-        return False
+        if check_for_victory(p):
+            p.victory = True
