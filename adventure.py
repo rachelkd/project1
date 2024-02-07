@@ -27,9 +27,10 @@ from typing import Optional
 
 def do_action(world: World, player: Player, player_location: Location, player_choice: str,
               available_actions: Optional[dict[str, str]] = None,
-              menu: Optional[list[str]] = None) -> None:
+              menu: Optional[list[str]] = None) -> Optional[int]:
     """Handles an action that a player executes in a given world based on player input.
-    If action is not a move function, then it prompts player for another action, and recursively calls this function."""
+    If action is not a move function, then it prompts player for another action, and recursively calls this function.
+    Returns 1 if player quits"""
 
     player_input = player_choice.lower().split()
     action_input = player_input[0]
@@ -57,7 +58,7 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
     elif action_input == 'look':
         location.get_long()
     elif action_input == 'quit':
-        return
+        return 1
     elif action_input == 'inventory':
         inv = []
         for item in p.inventory:
@@ -106,7 +107,10 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
 
     # Prompt player for action again
     player_choice = input("\nChoose action: ")
-    do_action(world, player, player_location, player_choice, available_actions, menu)
+    call = do_action(world, player, player_location, player_choice, available_actions, menu)
+    # Check if player called quit
+    if call == 1:
+        return 1
 
 
 def check_for_victory(p: Player) -> bool:
@@ -154,13 +158,9 @@ if __name__ == "__main__":
         print("What to do?\n")
         choice = input("\nEnter action: ").lower().strip()
 
-        if choice == 'quit':
-            quit_game = True
-            break
+        call_do_action = do_action(w, p, location, choice, available_actions, menu)
 
-        do_action(w, p, location, choice, available_actions, menu)
-
-        if choice == 'quit':
+        if call_do_action == 1:
             quit_game = True
             break
 
