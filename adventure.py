@@ -59,6 +59,8 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
         location.get_long()
     elif action_input == 'quit':
         return 1
+    elif action_input == 'score':
+        return p.score
     elif action_input == 'inventory':
         inv = []
         for item in p.inventory:
