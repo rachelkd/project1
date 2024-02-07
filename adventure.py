@@ -53,16 +53,10 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
         world.pick(player, player_location, arg)
     elif action_input == 'drop':
         world.drop(player, player_location, arg)
-        # TODO: JEHA PARK
-        #  see def drop in World method
-        #  arg is the item NAME btw
     elif action_input == 'look':
         location.get_long()
     elif action_input == 'quit':
-        pass
-        # TODO: JEHA PARK
-        #  add another condition to the while loop in this file __main__?
-        #  set it to True by default then false if person types quit
+
     elif action_input == 'inventory':
         inv = []
         for item in p.inventory:
