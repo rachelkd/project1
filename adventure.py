@@ -26,7 +26,8 @@ from typing import Optional
 
 
 def do_action(world: World, player: Player, player_location: Location, player_choice: str,
-              available_actions: Optional[dict[str, str]] = None, menu: Optional[list[str]] = None) -> None:
+              available_actions: Optional[dict[str, str]] = None,
+              menu: Optional[list[str]] = None) -> None:
     """Handles an action that a player executes in a given world based on player input.
     If action is not a move function, then it prompts player for another action, and recursively calls this function."""
 
@@ -59,7 +60,7 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
     elif action_input == 'look':
         location.get_long()
     elif action_input == 'quit':
-        pass
+        return
         # TODO: JEHA PARK
         #  add another condition to the while loop in this file __main__?
         #  set it to True by default then false if person types quit
@@ -157,9 +158,18 @@ if __name__ == "__main__":
         available_actions = location.available_actions
 
         print("What to do?\n")
-        choice = input("\nEnter action: ").lower()
+        choice = input("\nEnter action: ").lower().strip()
+
+        if choice == 'quit':
+            quit_game = True
+            break
 
         do_action(w, p, location, choice, available_actions, menu)
+
+        if choice == 'quit':
+            quit_game = True
+            break
+
         if check_for_victory(p):
             p.victory = True
 
@@ -167,7 +177,9 @@ if __name__ == "__main__":
         print('\x1B[3mSome time later...\x1B[0m')
         print('You made it to your exam in time with all your items.')
         print('You feel pretty confident about how you did! The studying paid off, hopefully.')
-    else:
+        print(f'Score: {p.score}')
+    elif not quit_game:
         print('You took too long to get to your exam. You missed it.')
-
-    print(f'Score: {p.score}')
+        print(f'Score: {p.score}')
+    else:
+        print('Quitting game...')
