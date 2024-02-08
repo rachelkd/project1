@@ -26,14 +26,17 @@ from typing import Optional
 
 
 def do_action(world: World, player: Player, player_location: Location, player_choice: str,
-              available_actions: Optional[dict[str, str]] = None,
-              menu: Optional[list[str]] = None) -> Optional[int]:
+              actions: Optional[dict[str, str]] = None,
+              menu_actions: Optional[list[str]] = None) -> Optional[int]:
     """Handles an action that a player executes in a given world based on player input.
     If action is not a move function, then it prompts player for another action, and recursively calls this function.
     Returns 1 if player quits"""
 
     player_input = player_choice.lower().split()
-    action_input = player_input[0]
+    try:
+        action_input = player_input[0]
+    except IndexError:
+        action_input = ''
     arg = ' '.join(player_input[1:])
 
     if action_input == 'go':
@@ -70,23 +73,24 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
         else:
             print(', '.join(inv))
     elif action_input == 'open':
-        if 'open' not in available_actions:
+        if 'open' not in actions:
             print('Nothing can be opened in this location.')
-        elif arg in available_actions['open']:
+        elif arg in actions['open']:
             w.open(p, location, arg)
         else:
             print(f'You cannot open a {arg}.')
 
     elif action_input == 'menu':
         print("Menu Options: \n")
-        for option in menu:
+        for option in menu_actions:
             print(option)
         print(f'\nActions available at LOCATION {player_location.num}: \n')
-        for action in available_actions:
+        for action in actions:
             print(f'{action} [argument]')
             # Print all Item or Furniture objects that an action can be performed on.
             print('\t' + ', '.join(player_location.available_actions[action]) + '\n')
-    elif any(action_input == action for action in available_actions):
+    elif (any(action_input == action for action in actions)
+          or any(action_input == action for item in p.inventory for action in item.actions)):
         obj = None
         # Check if item is in inventory
         if arg in {item.name for item in player.inventory}:
@@ -118,7 +122,7 @@ def do_action(world: World, player: Player, player_location: Location, player_ch
 
     # Prompt player for action again
     player_choice = input("\nChoose action: ")
-    call = do_action(world, player, player_location, player_choice, available_actions, menu)
+    call = do_action(world, player, player_location, player_choice, actions, menu_actions)
     # Check if player called quit
     if call == 1:
         return 1

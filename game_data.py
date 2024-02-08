@@ -126,7 +126,7 @@ class Location:
         else:
             self.get_long()
             self.visited = True
-            p.score += self.points
+            p.add_points(self.points)
 
     def get_brief(self) -> None:
         """Prints this Location's brief description to the console."""
@@ -326,7 +326,7 @@ class Furniture:
         Add points if this is the first time opening.
         """
         if not self.opened:
-            p.score += self.points
+            p.add_points(self.points)
         self.opened = True
         print(self.actions['open'])
         print('Items stored in this furniture:')
@@ -396,7 +396,7 @@ class LockedFurniture(Furniture):
         key = input('What is the key?\n')
         if key == self.key:
             if not self.opened:
-                p.score += self.points
+                p.add_points(self.points)
             self.opened = True
             print(self.actions['open'])
             print('Items stored in this furniture:')
@@ -491,7 +491,7 @@ class Player:
         """Adds an Item to this player's inventory.
         Adds points if item has not been picked up before."""
         if not item.picked_up:
-            self.score += item.points
+            self.add_points(item.points)
             item.picked_up = True
         # Handle PowerUp
         if isinstance(item, PowerUp):
@@ -504,6 +504,14 @@ class Player:
             if self.inventory[i] == item:
                 self.inventory.pop(i)
                 return
+
+    def add_points(self, points: int) -> None:
+        """Adds points to this player's score.
+        If score is not 0, then print a message saying that points were added.
+        """
+        if points > 0:
+            self.score += points
+            print(f'+{points} points')
 
 
 class World:

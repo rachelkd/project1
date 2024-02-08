@@ -36,10 +36,11 @@ END
 
 3
 20
-You are in a hallway in Bahen Center. Sadia's office is to the West. An empty classroom is to your North.
+You are in a hallway in Bahen Center. Sadia's office is to the West. An empty classroom is to your North. Return to the first floor of Bahen to your East.
 Nice, you took the stairs, and you're not winded. You notice Sadia's office to your West.
 Gosh, last time you were there for office hours, you had to leave because everyone's trying natural deodorant now.
 It doesn't work. There's an empty classroom to your North, which is strange for this time of the day.
+Return to the first floor of Bahen to your East.
 END
 
 4

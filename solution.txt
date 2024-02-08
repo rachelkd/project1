@@ -21,3 +21,13 @@ go west
 pick sticky note
 inventory
 read sticky note
+examine deodorant
+open drawer
+coal
+pick tcard
+inventory
+drop sticky note
+drop deodorant
+look
+go east
+go east
