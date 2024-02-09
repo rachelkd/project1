@@ -129,12 +129,14 @@ class Location:
 
     def get_brief(self) -> None:
         """Prints this Location's brief description to the console."""
-        print(f'\nLOCATION {self.num}')
+        if self.num != -1:
+            print(f'\nLOCATION {self.num}')
         print(self.brief)
 
     def get_long(self) -> None:
         """Prints this Location's brief description to the console."""
-        print(f'\nLOCATION {self.num}')
+        if self.num != -1:
+            print(f'\nLOCATION {self.num}')
         print(self.long)
 
 
@@ -190,7 +192,7 @@ class MissionLocation(Location):
                         self.mission_completed = True
                         return
             else:  # Player does not have the item to deliver in their inventory
-                print(f'Hint: This is a special location. You have to have a special item'
+                print(f'Hint: This is a special location. You have to have a special item '
                       f'in your inventory to receive something you might need when you visit this location.')
 
 
@@ -599,6 +601,9 @@ class Player:
         if points > 0:
             self.score += points
             print(f'+{points} points')
+        elif points < 0:
+            self.score += points
+            print(f'{points} points')
 
 
 class World:

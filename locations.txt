@@ -92,7 +92,7 @@ END
 10
 You are in a lecture room in Myhal. Return to the hallway to your North.
 You are in a lecture room in Myhal. There is nothing here. Like nothing... The desks and chairs are gone.
-The carpet has been torn. What's going on here?
+The carpet has been torn. What's going on here? Return to the hallway to your North.
 END
 
 11
