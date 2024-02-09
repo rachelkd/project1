@@ -301,12 +301,11 @@ class PowerUp(Item):
         - moves_back:
             The number of moves that a player gets deducted from their total.
             Moves are only deducted the first time a player picks up this item
-        - picked_up:
-            Boolean value that is True when a player has already picked up this item
 
     Representation Invariants:
-        - # TODO
+        - moves_back < 0
     """
+    move_backs: int
 
     def __init__(self, name, points, actions, moves_back):
         super().__init__(name, points, actions)
@@ -982,6 +981,13 @@ class World:
                         else:
                             print(f'You have not completed the mission for {item.name}.')
                             return
+                    # Handle PowerUp
+                    elif isinstance(item, PowerUp):
+                        p.add_to_inv(item)
+                        p.moves += item.move_backs
+                        location.interactables.remove(item)
+                        self.interactables[location.num].remove(item)
+                        print(item.actions['pick'])
                     # Handle Item in Furniture
                     elif item.stored_in_furniture != '':
                         # assert item.stored_in_furniture in {}

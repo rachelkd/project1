@@ -84,6 +84,7 @@ END
 You are on St. George Street North. Robarts is to your North. Return to St. George South to your South.
 You are on St. George Street North. Someone left their bike unlocked.
 Haven't they heard about the bikes being stolen on campus? People even take the wheels off sometimes.
+END
 ITEM START
 pu:::-2,bike,50,pick:::This will make your commute much easier.
 END
