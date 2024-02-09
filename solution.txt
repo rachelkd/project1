@@ -31,3 +31,20 @@ drop deodorant
 look
 go east
 go east
+go east
+examine food truck
+inventory
+go east
+go east
+go south
+inventory
+go north
+go west
+go west
+deliver food truck
+score
+inventory
+go north
+go north
+go north
+pick cheat sheet
