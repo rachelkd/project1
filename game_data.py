@@ -984,10 +984,11 @@ class World:
                     # Handle PowerUp
                     elif isinstance(item, PowerUp):
                         p.add_to_inv(item)
-                        p.moves += item.move_backs
+                        p.moves += item.moves_back
                         location.interactables.remove(item)
                         self.interactables[location.num].remove(item)
                         print(item.actions['pick'])
+                        return
                     # Handle Item in Furniture
                     elif item.stored_in_furniture != '':
                         # assert item.stored_in_furniture in {}
