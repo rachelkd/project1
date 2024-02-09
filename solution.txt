@@ -48,3 +48,11 @@ go north
 go north
 go north
 pick cheat sheet
+inventory
+go south
+go south
+go south
+go west
+go south
+score
+go east
