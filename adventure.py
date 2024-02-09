@@ -19,7 +19,7 @@ This file is Copyright (c) 2024 CSC111 Teaching Team
 """
 
 # Note: You may add in other import statements here as needed
-from game_data import World, Item, Location, Player, Furniture
+from game_data import World, Item, Location, Player, MissionLocation
 from typing import Optional
 
 # Note: You may add helper functions, classes, etc. here as needed
@@ -169,6 +169,11 @@ if __name__ == "__main__":
         # Print location description depending on if player has visited before
         # Add points if player first time visiting
         location.visit(p)
+
+        # If location is MissionLocation, then check if player has items to pick up
+        if isinstance(location, MissionLocation):
+            location.check_delivery(w, p, location)
+
         available_actions = location.available_actions
 
         print("What to do?\n")

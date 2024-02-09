@@ -17,12 +17,40 @@
 
 \begin{enumerate}
 
-\item Describe your enhancement \#1 here
+\item Furniture/LockedFurniture in world
 	\begin{itemize}
-	\item Brief description of what the enhancement is (if it's a puzzle, also describe what steps the player must take to solve it):
-	\item Complexity level (choose from low/medium/high):
-	\item Reasons you believe this is the complexity level (e.g. mention implementation details, how much code did you have to add/change from the baseline, what challenges did you face, etc.)
-	% Feel free to add more subheadings if you need
+	\item This enhancement acts like a furniture object at a location.
+	Just like real life, items can be stored inside Furniture objects.
+    Items inside furniture objects can only be picked up and interacted with if the furniture has been opened.
+    Players can receive points for opening Furniture by typing the action ``open \{furniture name\}''.
+    The LockedFurniture class inherits the Furniture class.
+    When a player opens an instance of LockedFurniture, they are prompted to enter key.
+    An instance of a Furniture can have special custom actions specified in the items.txt file.
+    For example, the blackboard in the game can be read by the action ``read blackboard''.
+	\item High
+	\item We believe this enhancement is of high complexity because it made it a lot more complex to read the items.txt file
+        Furniture objects and Items that are stored in furniture need to be formatted differently in the text file, which required code to check if a line
+        indicated that an ``item'' in the text file was actually a furniture object.
+        Then, there would be a different case to initializing the Furniture object.
+        Additionally, code had to be written that did not allow a player to pick up an item if it was stored in an unopened Furniture.
+        Consequently, Furniture had to have attributes that represented opened status and Items in furniture
+        LockedFurniture also inherits the Furniture class, but the method, open, had to be overridden because it has to read
+        input from the user and check if it equals the key stored in the key instance attribute to be opened.
+        Furthermore, items stored in Furniture that were picked up after opening a Furniture object could be dropped anywhere
+        and then picked up in that location without being ``stored in furniture.''
+        So, the drop method for the Item class had to be implemented such that an Item no longer had a corresponding Furniture
+        attribute when the method was called.
+        This enhancement required a lot of consideration of cases for implementation.
+	\end{itemize}
+
+\item Custom actions for Item and Furniture objects
+	\begin{itemize}
+	\item Basic description of what the enhancement is:
+	\item Low
+	\item Reasons you believe this is the complexity level (e.g. mention implementation details
+	% Feel free to add more subheadings if you feel the need
+        had to include these actions and which items/furniture objects it could be performed on
+        when a player called menu
 	\end{itemize}
 
 % Uncomment below section if you have more enhancements; copy-paste as many times as needed

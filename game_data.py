@@ -120,7 +120,6 @@ class Location:
         Preconditions:
             - self.num != -1
         """
-        print(f'\nLOCATION {self.num}')
         if self.visited:
             self.get_brief()
         else:
@@ -130,10 +129,12 @@ class Location:
 
     def get_brief(self) -> None:
         """Prints this Location's brief description to the console."""
+        print(f'\nLOCATION {self.num}')
         print(self.brief)
 
     def get_long(self) -> None:
         """Prints this Location's brief description to the console."""
+        print(f'\nLOCATION {self.num}')
         print(self.long)
 
 
@@ -148,18 +149,49 @@ class MissionLocation(Location):
         - item_to_receive:
             The name of the Item object that a player receives
             when item to deliver is delivered.
+        - mission_completed:
+            Status of mission for this MissionLocation.
+            True if player has successfully delivered the item to this MissionLocation.
+            Otherwise, False.
 
     Representation invariants:
         - item_to_deliver != ''
         - item_to_receive != ''
     """
+    item_to_deliver: str
+    item_to_receive: str
+    mission_completed: bool
 
     def __init__(self, num, points, brief, long, item_to_deliver, item_to_receive):
         super().__init__(num, points, brief, long)
         self.item_to_deliver = item_to_deliver
         self.item_to_receive = item_to_receive
+        self.mission_completed = False
 
-    # TODO: visit() method checks if player has object. NEED PLAYER ARG
+    def check_delivery(self, w: World, p: Player, location: Location) -> None:
+        """Checks if a player has this MissionLocation's item_to_deliver.
+        If the player does, then they automatically pick up this MissionLocation's item_to_receive.
+        Otherwise, they are given a hint that they must bring something to this location.
+
+        Preconditions:
+            - w.get_location(p.x, p.y) is location
+            - self.item_to_receive in location.interactables
+        """
+        if not self.mission_completed:
+            # Check if given player has item to deliver in their inventory
+            if any(item.name == self.item_to_deliver for item in p.inventory):
+                # Find item that player should receive
+                for interactable in location.interactables:
+                    if isinstance(interactable, MissionItem) and interactable.name == self.item_to_receive:
+                        # update the mission_completed status of this MissionItem object
+                        interactable.update_mission_completed(w, p, location)
+                        # drop the item to deliver
+                        w.drop(p, location, self.item_to_deliver)
+                        self.mission_completed = True
+                        return
+            else:  # Player does not have the item to deliver in their inventory
+                print(f'Hint: This is a special location. You have to have a special item'
+                      f'in your inventory to receive something you might need when you visit this location.')
 
 
 class Item:
@@ -253,11 +285,11 @@ class MissionItem(Item):
         super().__init__(name, points, None)
         self.mission_completed = False
 
-    def mission_completed(self, player: Player):
+    def update_mission_completed(self, world: World, player: Player, location: Location) -> None:
         """Updates this mission_completed attribute to be True.
         The player that completed the mission picks up this item automatically."""
         self.mission_completed = True
-        player.add_to_inv(self)
+        world.pick(player, location, self.name)
 
 
 class PowerUp(Item):
@@ -339,6 +371,7 @@ class Furniture:
         An action is valid if:
             - player is in the location
             - this Furniture is in the location
+            - action in self.actions
 
         Preconditions:
             - action != ''
@@ -380,13 +413,8 @@ class LockedFurniture(Furniture):
     def __init__(self, name: str, points: int, key: str) -> None:
         """Initialize a new LockedFurniture.
         """
-        # open_arg = 'You '
         super().__init__(name, points, {'open': f'You have opened {name}.'})
         self.key = key
-        # If items is not None, add it to self.items
-        # if items:
-        #     for item in items:
-        #         self.items.append(item)
         self.opened = False
 
     def open(self, p: Player) -> None:
@@ -435,6 +463,65 @@ class MissionFurniture(Furniture):
         self.item_given = item_given
         self.item_to_deliver = item_to_deliver
         self.item_to_receive = item_to_receive
+
+    def do_action(self, w: World, p: Player, location: Location, action: str) -> None:
+        """Performs an action on this item if action is valid.
+
+        An action is valid when:
+            - action in self.actions
+            - this MissionFurniture is in location
+        """
+        if w.get_location(p.x, p.y) is location and self in location.interactables:
+            if action in self.actions:
+                if action == 'examine':
+                    self.give_item_to_player(w, p, location)
+                elif action == 'deliver':
+                    self.check_delivery(w, p, location)
+            else:
+                print(f'{action} cannot be performed on {self.name}.')
+
+    def give_item_to_player(self, w: World, p: Player, location: Location):
+        """
+        When a player first interacts with this MissionFurniture, they receive
+        this MissionFurniture's item_given.
+        Then, this MissionFurniture's opened status is set to True since it has been interacted with.
+        If player has already interacted with this MissionFurniture, then they do not receive this item_given.
+
+        Preconditions:
+            - w.get_location(p.x, p.y) is location
+            - self.item_given in location.interactables
+        """
+        assert w.get_location(p.x, p.y) is location
+
+        # MissionItem search
+        for interactable in location.interactables:
+            if isinstance(interactable, MissionItem) and interactable.name == self.item_given:
+                # update the mission_completed status of this MissionItem object
+                interactable.update_mission_completed(w, p, location)
+                print(self.actions['examine'])
+                return
+
+    def check_delivery(self, w: World, p: Player, location: Location) -> None:
+        """Checks if player has delivered correct item.
+        A delivery is correct when self.item_to_deliver corresponds to an item in the given player's inventory.
+        If incorrect, the player is notified that they cannot deliver any of the items in their inventory.
+
+        Preconditions:
+            - w.get_location(p.x, p.y) is location
+            - self.item_to_receive in location.interactables
+        """
+        if any(item.name == self.item_to_deliver for item in p.inventory):  # Player has picked up the item to deliver
+            # Find item player should receive for completing mission
+            for interactable in location.interactables:
+                if isinstance(interactable, MissionItem) and interactable.name == self.item_to_receive:
+                    # update the mission_completed status of this MissionItem object
+                    interactable.update_mission_completed(w, p, location)
+                    # drop the item to deliver
+                    w.drop(p, location, self.item_to_deliver)
+                    print(self.actions['deliver'])
+                    return
+        else:  # Player does not have the item to deliver in their inventory
+            print(f'You cannot deliver anything in your inventory! Hint: You are looking for {self.item_to_deliver}.')
 
 
 class Player:
