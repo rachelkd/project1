@@ -21,6 +21,11 @@ This file is Copyright (c) 2024 CSC111 Teaching Team
 from __future__ import annotations
 from typing import Optional, TextIO, Union
 
+import python_ta
+python_ta.check_all(config={
+    'max-line-length': 120
+})
+
 
 class Location:
     """A location in our text adventure game world.
@@ -56,7 +61,7 @@ class Location:
     interactables: list[Union[Item, Furniture]]
     visited: bool
 
-    def __init__(self, num, points, brief, long) -> None:
+    def __init__(self, num: int, points: int, brief: str, long: str) -> None:
         """Initialize a new location.
         """
 
@@ -102,12 +107,14 @@ class Location:
         Preconditions:
             - self.num in {n for row in map for n in row}
         """
-        if self.num == -1:
-            return
-        for y in range(0, len(world.map)):
-            for x in range(0, len(world.map[0])):
-                if world.map[y][x] == self.num:
-                    return x, y
+        if self.num != -1:
+            for y in range(0, len(world.map)):
+                for x in range(0, len(world.map[0])):
+                    if world.map[y][x] == self.num:
+                        return x, y
+            return None
+        else:
+            return None
 
     def visit(self, p: Player) -> None:
         """Prints this Location description.
@@ -164,7 +171,8 @@ class MissionLocation(Location):
     item_to_receive: str
     mission_completed: bool
 
-    def __init__(self, num, points, brief, long, item_to_deliver, item_to_receive):
+    def __init__(self, num: int, points: int, brief: str, long: str, item_to_deliver: str,
+                 item_to_receive: str) -> None:
         super().__init__(num, points, brief, long)
         self.item_to_deliver = item_to_deliver
         self.item_to_receive = item_to_receive
@@ -192,8 +200,8 @@ class MissionLocation(Location):
                         self.mission_completed = True
                         return
             else:  # Player does not have the item to deliver in their inventory
-                print(f'Hint: This is a special location. You have to have a special item '
-                      f'in your inventory to receive something you might need when you visit this location.')
+                print('Hint: This is a special location. You have to have a special item '
+                      'in your inventory to receive something you might need when you visit this location.')
 
 
 class Item:
@@ -224,7 +232,7 @@ class Item:
     picked_up: bool
 
     def __init__(self, name: str, points: int, actions: Optional[dict[str, str]] = None,
-                 stored_in_furniture: Optional[str] = None):
+                 stored_in_furniture: Optional[str] = None) -> None:
         self.name = name
         self.points = points
         self.actions = {'pick': f'You have picked up {self.name}.', 'drop': f'You have dropped {self.name}.'}
@@ -237,12 +245,12 @@ class Item:
             for action in actions:
                 self.add_action(action, actions[action])
 
-    def add_action(self, action: str, argument: str):
+    def add_action(self, action: str, argument: str) -> None:
         """Helper function for self.__init__. Add or mutate an action in self.actions.
         If the action is pick or drop, then the action argument must
         be appended to the actions.
         """
-        if action == 'pick' or action == 'drop':
+        if action in {'pick', 'drop'}:
             self.actions[action] += f'\n{argument}'
         else:
             self.actions[action] = argument
@@ -305,9 +313,9 @@ class PowerUp(Item):
     Representation Invariants:
         - moves_back < 0
     """
-    move_backs: int
+    moves_back: int
 
-    def __init__(self, name, points, actions, moves_back):
+    def __init__(self, name: str, points: int, actions: dict[str, str], moves_back: int) -> None:
         super().__init__(name, points, actions)
         self.moves_back = moves_back
 
@@ -408,8 +416,8 @@ class LockedFurniture(Furniture):
     points: int
     key: str
     items: list[Item]
-    actions = dict[str, str]
-    opened = bool
+    actions: dict[str, str]
+    opened: bool
 
     def __init__(self, name: str, points: int, key: str) -> None:
         """Initialize a new LockedFurniture.
@@ -481,7 +489,7 @@ class MissionFurniture(Furniture):
             else:
                 print(f'{action} cannot be performed on {self.name}.')
 
-    def give_item_to_player(self, w: World, p: Player, location: Location):
+    def give_item_to_player(self, w: World, p: Player, location: Location) -> None:
         """
         When a player first interacts with this MissionFurniture, they receive
         this MissionFurniture's item_given.
@@ -501,6 +509,7 @@ class MissionFurniture(Furniture):
                 interactable.update_mission_completed(w, p, location)
                 print(self.actions['examine'])
                 return
+        return
 
     def check_delivery(self, w: World, p: Player, location: Location) -> None:
         """Checks if player has delivered correct item.
@@ -890,6 +899,8 @@ class World:
             for location in self.locations:
                 if location.num == location_number:
                     return location
+
+            return None
 
         except IndexError:
             return None
