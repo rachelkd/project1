@@ -73,10 +73,10 @@ END
 
 8
 10
-You are on St. George Street South. Go back to Bahen to your West, or go to St. George North to your North.
+You are on St. George Street South. Go back to Bahen to your West, or go to St. George North to your North. Myhal is to your East.
 You are on St. George Street South. I guess classes just ended, because there's a lot of people walking around.
 A lot of people are waiting for food from the food truck.
-Escape the crowd by going back to Bahen to your West, or continue up to St. George North to your North.
+Escape the crowd by going back to Bahen to your West, or continue up to St. George North to your North. Go to Myhal to your East.
 END
 
 9

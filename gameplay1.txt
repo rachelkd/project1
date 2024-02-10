@@ -1,0 +1,13 @@
+
+go north
+go west
+go north
+open desk
+score
+pick pencil
+inventory
+pick deodorant
+score
+inventory
+examine deodorant
+read blackboard

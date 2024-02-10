@@ -1,0 +1,7 @@
+
+go north
+go east
+go north
+pick bike
+ride bike
+drop bike

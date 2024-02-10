@@ -1,0 +1,6 @@
+
+go north
+go west
+go west
+open drawer
+coal

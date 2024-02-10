@@ -1,0 +1,14 @@
+
+go north
+go east
+examine food truck
+inventory
+look
+go east
+go east
+go south
+go north
+go west
+go west
+deliver food truck
+inventory
